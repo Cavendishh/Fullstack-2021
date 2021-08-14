@@ -1,8 +1,7 @@
 const Total = ({ parts }) => {
-  console.log(parts)
-  let sum = 0
-
-  parts.forEach((r) => (sum += r.exercises))
+  const sum = parts
+    .map((part) => part.exercises)
+    .reduce((s, currentValue) => s + currentValue)
 
   return (
     <div>
