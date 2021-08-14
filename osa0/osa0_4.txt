@@ -1,0 +1,23 @@
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new.note
+palvelin-->selain: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes (Status: 302)
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes
+palvelin-->selain: HTML-koodi (Status: 304)
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+palvelin-->selain: main.css (Status: 304)
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.js
+palvelin-->selain: main.js (Status: 304)
+
+note over selain:
+Selain alkaa suorittaa js-koodia ->
+pyytää JSON-datan palvelimelta
+end note
+
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+palvelin-->selain: [{ content: "Tehtävä 0.4", date: "2021-08-14" }, ...] (Status: 200)
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/favicon.ico
+palvelin-->selain: HTTP GET https://fullstack-exampleapp.herokuapp.com/favicon.ico (Status: 200)
+
+note over selain:
+Selain suorittaa tapahtumankäsittelijän ->
+renderöi muistiinpanot näytölle.
+end note

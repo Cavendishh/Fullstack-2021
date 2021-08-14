@@ -1,0 +1,2 @@
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa.json
+palvelin-->selain: [{ content: "Tehtävä 0.6", date: "2021-08-14" }, ...] (Status: 201)
