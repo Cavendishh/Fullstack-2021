@@ -2,6 +2,19 @@ import React, { useState } from 'react'
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
+const GenerateMostVoted = ({ votes, anecdotes }) => {
+  const maxVote = Math.max(...votes)
+  let maxIndex = votes.indexOf(maxVote)
+
+  if (maxVote === 0) return <p>No anecdotes has been voted yet.</p>
+
+  return (
+    <p>
+      "{anecdotes[maxIndex]}" has <b>{votes[maxIndex]}</b> votes.
+    </p>
+  )
+}
+
 const App = () => {
   const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(new Array(7).fill(0))
@@ -30,6 +43,8 @@ const App = () => {
       <Button onClick={onAddVote} text={'Vote this'} /> <br />
       {anecdotes[selected]}
       <p>This anecdote has {votes[selected]} votes.</p>
+      <h3>Anecdote with the most votes</h3>
+      <GenerateMostVoted votes={votes} anecdotes={anecdotes} />
     </>
   )
 }
