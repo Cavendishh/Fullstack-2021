@@ -6,9 +6,17 @@ const App = () => {
 
   const onSubmit = (e) => {
     e.preventDefault()
-    const person = { name: newName }
-    setPersons(persons.concat(person))
-    setNewName('')
+
+    const nameExists = persons.findIndex((r) => r.name === newName)
+
+    if (nameExists === -1) {
+      setPersons(persons.concat({ name: newName }))
+      setNewName('')
+
+      return
+    }
+
+    alert(`Person '${newName}' is already added to phonebook . . .`)
   }
 
   const onNameChange = (e) => setNewName(e.target.value)
