@@ -73,8 +73,10 @@ app.post('/api/persons', (req, res) => {
   const body = req.body
   console.log(body)
 
-  if (!body.name) return res.status(400).json({ error: "Person's name is missing" })
-  if (!body.number) return res.status(400).json({ error: "Person's number is missing" })
+  if (!body.name) return res.status(400).json({ error: `Person's name is missing` })
+  if (!body.number) return res.status(400).json({ error: `Person's number is missing` })
+  if (persons.find((p) => p.name.toLowerCase() === body.name.toLowerCase()))
+    return res.status(400).json({ error: 'Person already exists' })
 
   const person = {
     name: body.name,
