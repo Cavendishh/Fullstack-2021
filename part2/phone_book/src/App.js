@@ -18,7 +18,7 @@ const App = () => {
   })
 
   useEffect(() => {
-    personService.getAll().then((r) => setPersons(r.data))
+    personService.getAll().then((r) => setPersons(r))
   }, [])
 
   const onSubmit = (e) => {
@@ -33,7 +33,8 @@ const App = () => {
       personService
         .create(person)
         .then((r) => {
-          setPersons(persons.concat(r.data))
+          console.log(r)
+          setPersons(r)
           setNewName('')
           setNewNumber('')
 
@@ -42,7 +43,7 @@ const App = () => {
             status: 'success',
           })
         })
-        .catch((error) => {
+        .catch(() => {
           setNotification({
             message: 'Something went wrong...',
             status: 'error',
@@ -60,7 +61,7 @@ const App = () => {
     personService
       .update(person)
       .then((r) => {
-        setPersons(persons.map((p) => (p.id !== person.id ? p : r.data)))
+        setPersons(persons.map((p) => (p.id !== person.id ? p : r)))
 
         setNotification({
           message: 'Person updated',
