@@ -30,16 +30,24 @@ const App = () => {
     }
 
     if (persons.findIndex((r) => r.name === newName) === -1) {
-      personService.create(person).then((r) => {
-        setPersons(persons.concat(r.data))
-        setNewName('')
-        setNewNumber('')
+      personService
+        .create(person)
+        .then((r) => {
+          setPersons(persons.concat(r.data))
+          setNewName('')
+          setNewNumber('')
 
-        setNotification({
-          message: 'Person created',
-          status: 'success',
+          setNotification({
+            message: 'Person created',
+            status: 'success',
+          })
         })
-      })
+        .catch((error) => {
+          setNotification({
+            message: 'Something went wrong...',
+            status: 'error',
+          })
+        })
 
       return resetNotification()
     }
@@ -49,14 +57,24 @@ const App = () => {
     person = persons.find((r) => r.name === newName)
     person.number = newNumber
 
-    personService.update(person).then((r) => {
-      setPersons(persons.map((p) => (p.id !== person.id ? p : r.data)))
+    personService
+      .update(person)
+      .then((r) => {
+        setPersons(persons.map((p) => (p.id !== person.id ? p : r.data)))
 
-      setNotification({
-        message: 'Person updated',
-        status: 'success',
+        setNotification({
+          message: 'Person updated',
+          status: 'success',
+        })
       })
-    })
+      .catch(() => {
+        setNotification({
+          message: `Information of ${newName} has already been removed from server`,
+          status: 'error',
+        })
+
+        setPersons([...persons].filter((n) => n.id !== person.id))
+      })
 
     resetNotification()
   }
@@ -66,14 +84,24 @@ const App = () => {
 
     const id = parseInt(e.target.value)
 
-    personService.remove(id).then((r) => {
-      setPersons([...persons].filter((p) => p.id !== id))
+    personService
+      .remove(id)
+      .then((r) => {
+        setPersons([...persons].filter((p) => p.id !== id))
 
-      setNotification({
-        message: 'Person deleted',
-        status: 'success',
+        setNotification({
+          message: 'Person deleted',
+          status: 'success',
+        })
       })
-    })
+      .catch(() => {
+        setNotification({
+          message: `Information of ${newName} has already been removed from server`,
+          status: 'error',
+        })
+
+        setPersons([...persons].filter((n) => n.id !== id))
+      })
 
     resetNotification()
   }
