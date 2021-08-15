@@ -11,7 +11,6 @@ const create = (obj) => {
 }
 
 const update = (obj) => {
-  console.log('OBJECT', obj)
   return axios.put(`${baseUrl}/${obj.id}`, obj)
 }
 
