@@ -11,16 +11,17 @@ const App = () => {
     axios.get('https://restcountries.eu/rest/v2/all').then((r) => setCountries(r.data))
   }, [])
 
+  const onFilterChange = (e) => setFilter(e.target.value)
+  const onButtonClick = (event) => setFilter(event.target.attributes.country.value)
+
   const countriesFiltered = countries.filter((c) =>
     c.name.toLowerCase().includes(filter.toLowerCase())
   )
 
-  const onFilterChange = (e) => setFilter(e.target.value)
-
   return (
     <div className='App'>
       find countries <input value={filter} onChange={onFilterChange} />
-      <Countries countries={countriesFiltered} />
+      {countries.length > 0 && <Countries countries={countriesFiltered} onClick={onButtonClick} />}
     </div>
   )
 }

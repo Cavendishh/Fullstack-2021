@@ -1,4 +1,4 @@
-const Countries = ({ countries }) => {
+const Countries = ({ countries, onClick }) => {
   if (countries.length > 10) return <p>More than 10 matches. Please specify. </p>
 
   if (!countries.length) return <p>No country found</p>
@@ -22,7 +22,14 @@ const Countries = ({ countries }) => {
     )
   }
 
-  return countries.map((c) => <p key={c.name}>{c.name}</p>)
+  return countries.map((c) => (
+    <p key={c.name}>
+      {c.name}
+      <button onClick={onClick} country={c.name}>
+        Show
+      </button>
+    </p>
+  ))
 }
 
 export default Countries
