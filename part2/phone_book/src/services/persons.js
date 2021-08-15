@@ -10,6 +10,11 @@ const create = (obj) => {
   return axios.post(baseUrl, obj)
 }
 
+const update = (obj) => {
+  console.log('OBJECT', obj)
+  return axios.put(`${baseUrl}/${obj.id}`, obj)
+}
+
 const remove = (id) => {
   return axios.delete(`${baseUrl}/${id}`)
 }
@@ -17,6 +22,7 @@ const remove = (id) => {
 const exportObj = {
   getAll,
   create,
+  update,
   remove,
 }
 

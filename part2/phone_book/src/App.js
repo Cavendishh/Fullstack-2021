@@ -18,14 +18,12 @@ const App = () => {
   const onSubmit = (e) => {
     e.preventDefault()
 
-    const nameExists = persons.findIndex((r) => r.name === newName)
+    let person = {
+      name: newName,
+      number: newNumber,
+    }
 
-    if (nameExists === -1) {
-      const person = {
-        name: newName,
-        number: newNumber,
-      }
-
+    if (persons.findIndex((r) => r.name === newName) === -1) {
       personService.create(person).then((r) => {
         setPersons(persons.concat(r.data))
         setNewName('')
@@ -35,7 +33,14 @@ const App = () => {
       return
     }
 
-    alert(`Person '${newName}' is already added to phonebook . . .`)
+    if (!window.confirm(`${newName} is already added, replace the old number with new?`)) return
+
+    person = persons.find((r) => r.name === newName)
+    person.number = newNumber
+
+    personService.update(person).then((r) => {
+      setPersons(persons.map((p) => (p.id !== person.id ? p : r.data)))
+    })
   }
 
   const onDelete = (e) => {
