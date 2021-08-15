@@ -46,6 +46,7 @@ let persons = [
   },
 ]
 
+// * GET * //
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
@@ -67,6 +68,26 @@ app.get('/info', (req, res) => {
   res.send(`<p>Phonebook has info for ${persons.length} people.<br><br>${new Date()}</p>`)
 })
 
+// * POST * //
+app.post('/api/persons', (req, res) => {
+  const body = req.body
+  console.log(body)
+
+  if (!body.name) return res.status(400).json({ error: "Person's name is missing" })
+  if (!body.number) return res.status(400).json({ error: "Person's number is missing" })
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: Math.round(Math.random() * 99999),
+  }
+
+  persons = persons.concat(person)
+
+  res.json(persons)
+})
+
+// * DELETE * //
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
   persons = persons.filter((p) => p.id !== id)
@@ -74,6 +95,7 @@ app.delete('/api/persons/:id', (req, res) => {
   res.status(204).end()
 })
 
+// * CONFIG * //
 const port = 3001
 app.listen(port)
 console.log(`Server running on port ${port}`)
