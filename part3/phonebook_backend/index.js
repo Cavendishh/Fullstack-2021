@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
+const port = process.env.PORT || 3001
 
+app.use(morgan('tiny'))
 app.use(express.json())
 
 let persons = [
@@ -71,7 +74,6 @@ app.get('/info', (req, res) => {
 // * POST * //
 app.post('/api/persons', (req, res) => {
   const body = req.body
-  console.log(body)
 
   if (!body.name) return res.status(400).json({ error: `Person's name is missing` })
   if (!body.number) return res.status(400).json({ error: `Person's number is missing` })
@@ -98,6 +100,5 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 // * CONFIG * //
-const port = 3001
 app.listen(port)
 console.log(`Server running on port ${port}`)
