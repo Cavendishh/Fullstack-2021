@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 
 import personService from './services/persons'
 import Filter from './components/Filter'
@@ -28,7 +27,7 @@ const App = () => {
       }
 
       personService.create(person).then((r) => {
-        setPersons(persons.concat(person))
+        setPersons(persons.concat(r.data))
         setNewName('')
         setNewNumber('')
       })
@@ -37,6 +36,16 @@ const App = () => {
     }
 
     alert(`Person '${newName}' is already added to phonebook . . .`)
+  }
+
+  const onDelete = (e) => {
+    if (!window.confirm('Do you really want to delete this person?')) return
+
+    const id = parseInt(e.target.value)
+    console.log(id)
+    personService.remove(id).then((r) => {
+      setPersons([...persons].filter((p) => p.id !== id))
+    })
   }
 
   const onNameChange = (e) => setNewName(e.target.value)
@@ -58,7 +67,7 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons persons={persons} newFilter={newFilter} />
+      <Persons persons={persons} newFilter={newFilter} onDelete={onDelete} />
     </div>
   )
 }
