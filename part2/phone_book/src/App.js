@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 
 import personService from './services/persons'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 
@@ -10,6 +11,11 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+
+  const [notification, setNotification] = useState({
+    message: '',
+    status: '',
+  })
 
   useEffect(() => {
     personService.getAll().then((r) => setPersons(r.data))
@@ -28,9 +34,14 @@ const App = () => {
         setPersons(persons.concat(r.data))
         setNewName('')
         setNewNumber('')
+
+        setNotification({
+          message: 'Person created',
+          status: 'success',
+        })
       })
 
-      return
+      return resetNotification()
     }
 
     if (!window.confirm(`${newName} is already added, replace the old number with new?`)) return
@@ -40,17 +51,40 @@ const App = () => {
 
     personService.update(person).then((r) => {
       setPersons(persons.map((p) => (p.id !== person.id ? p : r.data)))
+
+      setNotification({
+        message: 'Person updated',
+        status: 'success',
+      })
     })
+
+    resetNotification()
   }
 
   const onDelete = (e) => {
     if (!window.confirm('Do you really want to delete this person?')) return
 
     const id = parseInt(e.target.value)
-    console.log(id)
+
     personService.remove(id).then((r) => {
       setPersons([...persons].filter((p) => p.id !== id))
+
+      setNotification({
+        message: 'Person deleted',
+        status: 'success',
+      })
     })
+
+    resetNotification()
+  }
+
+  const resetNotification = () => {
+    setTimeout(() => {
+      setNotification({
+        message: '',
+        status: '',
+      })
+    }, 3000)
   }
 
   const onNameChange = (e) => setNewName(e.target.value)
@@ -58,7 +92,8 @@ const App = () => {
   const onFilterChange = (e) => setNewFilter(e.target.value)
 
   return (
-    <div>
+    <>
+      <Notification notification={notification} />
       <h2>Phonebook</h2>
       <Filter filter={newFilter} onChange={onFilterChange} />
 
@@ -73,7 +108,7 @@ const App = () => {
 
       <h3>Numbers</h3>
       <Persons persons={persons} newFilter={newFilter} onDelete={onDelete} />
-    </div>
+    </>
   )
 }
 
