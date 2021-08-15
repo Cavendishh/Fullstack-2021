@@ -30,6 +30,15 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
 
+app.get('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id)
+  const person = persons.find((p) => p.id === id)
+
+  if (person) return res.json(person)
+
+  res.status(404).end()
+})
+
 app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
