@@ -1,16 +1,12 @@
 module.exports = {
     'env': {
         'commonjs': true,
-        'es6': true,
+        'es2021': true,
         'node': true
     },
     'extends': 'eslint:recommended',
-    'globals': {
-        'Atomics': 'readonly',
-        'SharedArrayBuffer': 'readonly'
-    },
     'parserOptions': {
-        'ecmaVersion': 2018
+        'ecmaVersion': 12
     },
     'rules': {
         'indent': [
@@ -37,6 +33,6 @@ module.exports = {
         'arrow-spacing': [
             'error', { 'before': true, 'after': true }
         ],
-        'no-console': 0
+        'no-console': 0,
     }
 }
