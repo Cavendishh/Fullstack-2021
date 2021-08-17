@@ -46,15 +46,14 @@ app.post('/api/persons', (req, res) => {
   if (persons.find((p) => p.name.toLowerCase() === body.name.toLowerCase()))
     return res.status(400).json({ error: 'Person already exists' })
 
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
-    id: Math.round(Math.random() * 99999),
-  }
+  })
 
-  persons = persons.concat(person)
-
-  res.json(persons)
+  person.save().then(() => {
+    Person.find({}).then((p) => res.json(p))
+  })
 })
 
 // * DELETE * //
