@@ -1,41 +1,19 @@
 const express = require('express')
-const app = express()
-const morgan = require('morgan')
-const port = process.env.PORT || 3001
 const cors = require('cors')
+const morgan = require('morgan')
+const app = express()
+const Person = require('./models/person')
+
+require('dotenv').config()
 
 app.use(cors())
 app.use(express.json())
 app.use(express.static('build'))
-
-// app.use(morgan('tiny'))
 morgan.token('object', function (req, res) {
   return console.log(req.body)
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :object'))
-
-let persons = [
-  {
-    name: 'Arto Hellas',
-    number: '040-123456',
-    id: 1,
-  },
-  {
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-    id: 2,
-  },
-  {
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-    id: 3,
-  },
-  {
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-    id: 4,
-  },
-]
+// app.use(morgan('tiny'))
 
 // * GET * //
 app.get('/', (req, res) => {
@@ -52,7 +30,7 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person.find({}).then((p) => res.json(p))
 })
 
 app.get('/info', (req, res) => {
@@ -88,5 +66,30 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 // * CONFIG * //
+const port = process.env.PORT
+
 app.listen(port)
 console.log(`Server running on port ${port}`)
+
+let persons = [
+  {
+    name: 'Arto Hellas',
+    number: '040-123456',
+    id: 1,
+  },
+  {
+    name: 'Ada Lovelace',
+    number: '39-44-5323523',
+    id: 2,
+  },
+  {
+    name: 'Dan Abramov',
+    number: '12-43-234345',
+    id: 3,
+  },
+  {
+    name: 'Mary Poppendieck',
+    number: '39-23-6423122',
+    id: 4,
+  },
+]
