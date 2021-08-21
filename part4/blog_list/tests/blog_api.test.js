@@ -95,6 +95,30 @@ describe('POST blogs', () => {
   })
 })
 
+describe('PUT blogs', () => {
+  test('editing amount of likes on a blog post', async () => {
+    const blogsAtStart = await blogsInDb()
+    const blogToEdit = blogsAtStart[0]
+
+    const newBlog = {
+      ...blogToEdit,
+      likes: 10,
+    }
+
+    await api
+      .put(`/api/blogs/${blogToEdit.id}`)
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await blogsInDb()
+    expect(blogsAtEnd).toHaveLength(initialBlogs.length)
+
+    const foundBlog = blogsAtEnd.find((blog) => blog.likes === 10)
+    expect(foundBlog.likes).toBe(10)
+  })
+})
+
 describe('DELETE blogs', () => {
   test('deletes with status code of 204 if id is valid', async () => {
     const blogsAtStart = await blogsInDb()
