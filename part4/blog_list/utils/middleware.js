@@ -16,9 +16,9 @@ const errorHandler = (err, req, res, next) => {
   logger.error(err.message)
 
   if (err.name === 'CastError' && err.kind === 'ObjectId') {
-    return res.status(400).send({ err: 'malformatted id' })
+    return res.status(400).send({ error: 'malformatted id' })
   } else if (err.name === 'ValidationError') {
-    return res.status(400).json({ err: err.message })
+    return res.status(400).json({ error: err.message })
   }
 
   next(error)

@@ -1,9 +1,11 @@
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
-const { initialBlogs, blogsInDb } = require('./test_helper')
+const { initialBlogs, blogsInDb, usersInDb } = require('./test_helper')
 const supertest = require('supertest')
 const app = require('../app')
+const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const api = supertest(app)
 
@@ -12,7 +14,7 @@ beforeEach(async () => {
   await Blog.insertMany(initialBlogs)
 })
 
-describe('GET blogs', () => {
+describe('Blogs GET', () => {
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -33,7 +35,7 @@ describe('GET blogs', () => {
   })
 })
 
-describe('POST blogs', () => {
+describe('Blogs POST', () => {
   test('add a new blog', async () => {
     const blogsAtStart = await blogsInDb()
 
@@ -95,7 +97,7 @@ describe('POST blogs', () => {
   })
 })
 
-describe('PUT blogs', () => {
+describe('Blogs PUT', () => {
   test('editing amount of likes on a blog post', async () => {
     const blogsAtStart = await blogsInDb()
     const blogToEdit = blogsAtStart[0]
@@ -119,7 +121,7 @@ describe('PUT blogs', () => {
   })
 })
 
-describe('DELETE blogs', () => {
+describe('Blogs DELETE', () => {
   test('deletes with status code of 204 if id is valid', async () => {
     const blogsAtStart = await blogsInDb()
     const blogToDelete = blogsAtStart[0]
@@ -136,6 +138,60 @@ describe('DELETE blogs', () => {
     const blogTitles = blogsAtEnd.map((b) => b.title)
 
     expect(blogTitles).not.toContain(blogToDelete.title)
+  })
+})
+
+describe('Users GET', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('SECRET', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+
+  test('new user created', async () => {
+    const usersAtStart = await usersInDb()
+
+    const newUser = {
+      username: 'Cavendishh',
+      name: 'Janne Kavander',
+      password: 'fullStack',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map((u) => u.username)
+    expect(usernames).toContain(newUser.username)
+  })
+
+  test('if username exists already throw status code 400', async () => {
+    const usersAtStart = await usersInDb()
+
+    const newUser = {
+      username: 'root',
+      name: 'superAdmin',
+      password: 'root',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('`username` to be unique')
+
+    const usersAtEnd = await usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 })
 
