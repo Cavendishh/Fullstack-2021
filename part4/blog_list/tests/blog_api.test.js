@@ -142,6 +142,15 @@ describe('Blogs DELETE', () => {
 })
 
 describe('Users GET', () => {
+  test('users are returned as json', async () => {
+    await api
+      .get('/api/users')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+})
+
+describe('Users POST', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
@@ -193,8 +202,26 @@ describe('Users GET', () => {
     const usersAtEnd = await usersInDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
+
+  test('if username and/or password is shorter than the minimum allowed length (3)', async () => {
+    const usersAtStart = await usersInDb()
+
+    const newUser = {
+      username: 'rt',
+      name: 'Tester man',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('minimum allowed length is three (3)')
+
+    const usersAtEnd = await usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+  })
 })
 
-afterAll(() => {
-  mongoose.connection.close()
-})
+afterAll(() => mongoose.connection.close())

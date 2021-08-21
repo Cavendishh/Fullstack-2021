@@ -11,6 +11,14 @@ usersRouter.get('/', async (req, res) => {
 usersRouter.post('/', async (req, res) => {
   const body = req.body
 
+  if (body.username.length < 3 || body.password.length < 3) {
+    return res
+      .status(400)
+      .json({
+        error: `User validation failed: Username and password minimum allowed length is three (3)`,
+      })
+  }
+
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
