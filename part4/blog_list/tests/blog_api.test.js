@@ -11,46 +11,71 @@ beforeEach(async () => {
   await Blog.insertMany(helper.initialBlogs)
 })
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+describe('GET blogs', () => {
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('all blogs are returned', async () => {
+    const res = await api.get('/api/blogs')
+
+    expect(res.body).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('blogs have id field in blog objects', async () => {
+    const res = await api.get('/api/blogs')
+
+    expect(res.body[0].id).toBeDefined()
+  })
 })
 
-test('all bogs are returned', async () => {
-  const res = await api.get('/api/blogs')
+describe('POST blogs', () => {
+  test('add a new blog', async () => {
+    const blogsAtStart = await helper.blogsInDb()
 
-  expect(res.body).toHaveLength(helper.initialBlogs.length)
-})
+    const newBlog = {
+      title: 'A new blog',
+      author: 'Tester',
+      url: 'https://fullstackopen.com/',
+      likes: 0,
+    }
 
-test('blogs have id field in blog objects', async () => {
-  const res = await api.get('/api/blogs')
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
-  expect(res.body[0].id).toBeDefined()
-})
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length + 1)
 
-test('adding a new blog', async () => {
-  const blogsAtStart = await helper.blogsInDb()
+    const blogTitles = blogsAtEnd.map((b) => b.title)
+    expect(blogTitles).toContain(newBlog.title)
+  })
 
-  const newBlog = {
-    title: 'A new blog',
-    author: 'Tester',
-    url: 'https://google.com/',
-    likes: 0,
-  }
+  test('if new blog has no likes defined', async () => {
+    const newBlog = {
+      title: 'A new blog',
+      author: 'Tester',
+      url: 'https://fullstackopen.com/',
+    }
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
-  const blogsAtEnd = await helper.blogsInDb()
-  expect(blogsAtEnd).toHaveLength(blogsAtStart.length + 1)
+    const blogsAtEnd = await helper.blogsInDb()
+    const savedBlog = await blogsAtEnd.find(
+      (b) => b.title === newBlog.title && b.author === newBlog.author
+    )
 
-  const blogTitles = blogsAtEnd.map((b) => b.title)
-  expect(blogTitles).toContain(newBlog.title)
+    expect(savedBlog.likes).toBe(0)
+  })
 })
 
 afterAll(() => {
