@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
+const { initialBlogs, blogsInDb } = require('./test_helper')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
@@ -8,7 +9,7 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+  await Blog.insertMany(initialBlogs)
 })
 
 describe('GET blogs', () => {
@@ -22,7 +23,7 @@ describe('GET blogs', () => {
   test('all blogs are returned', async () => {
     const res = await api.get('/api/blogs')
 
-    expect(res.body).toHaveLength(helper.initialBlogs.length)
+    expect(res.body).toHaveLength(initialBlogs.length)
   })
 
   test('blogs have id field in blog objects', async () => {
@@ -34,7 +35,7 @@ describe('GET blogs', () => {
 
 describe('POST blogs', () => {
   test('add a new blog', async () => {
-    const blogsAtStart = await helper.blogsInDb()
+    const blogsAtStart = await blogsInDb()
 
     const newBlog = {
       title: 'A new blog',
@@ -49,7 +50,7 @@ describe('POST blogs', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    const blogsAtEnd = await helper.blogsInDb()
+    const blogsAtEnd = await blogsInDb()
     expect(blogsAtEnd).toHaveLength(blogsAtStart.length + 1)
 
     const blogTitles = blogsAtEnd.map((b) => b.title)
@@ -69,7 +70,7 @@ describe('POST blogs', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    const blogsAtEnd = await helper.blogsInDb()
+    const blogsAtEnd = await blogsInDb()
     const savedBlog = await blogsAtEnd.find(
       (b) => b.title === newBlog.title && b.author === newBlog.author
     )
@@ -89,8 +90,28 @@ describe('POST blogs', () => {
       .send(newBlog)
       .expect(400)
 
-    const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    const blogsAtEnd = await blogsInDb()
+    expect(blogsAtEnd).toHaveLength(initialBlogs.length)
+  })
+})
+
+describe('DELETE blogs', () => {
+  test('deletes with status code of 204 if id is valid', async () => {
+    const blogsAtStart = await blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    // prettier-ignore
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(initialBlogs.length - 1)
+
+    const blogTitles = blogsAtEnd.map((b) => b.title)
+
+    expect(blogTitles).not.toContain(blogToDelete.title)
   })
 })
 
