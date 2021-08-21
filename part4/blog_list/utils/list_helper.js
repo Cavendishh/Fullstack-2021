@@ -1,5 +1,12 @@
 const dummy = (blogs) => 1
 
+const cleanBlogObj = (blog) => {
+  delete blog.__v
+  delete blog._id
+  delete blog.url
+  return blog
+}
+
 const totalLikes = (blogs) => {
   return blogs.reduce((total, blog) => total + blog.likes, 0)
 }
@@ -22,11 +29,17 @@ const mostBlogs = (blogs) => {
   return authors.reduce((prev, current) => (prev.blogs > current.blogs ? prev : current))
 }
 
-const cleanBlogObj = (blog) => {
-  delete blog.__v
-  delete blog._id
-  delete blog.url
-  return blog
+const mostLikes = (blogs) => {
+  const authors = blogs.reduce((prev, current) => {
+    let authorObj = prev.find((r) => r.author === current.author)
+
+    if (!authorObj) return prev.concat({ author: current.author, likes: current.likes })
+
+    authorObj.likes += current.likes
+    return prev
+  }, [])
+
+  return favoriteBlog(authors)
 }
 
 module.exports = {
@@ -34,4 +47,5 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 }
