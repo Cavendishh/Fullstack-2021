@@ -36,14 +36,30 @@ describe('Blogs GET', () => {
 })
 
 describe('Blogs POST', () => {
+  beforeEach(async () => {
+    const newUser = {
+      username: 'root',
+      name: 'root',
+      password: 'root',
+    }
+
+    // prettier-ignore
+    await api
+      .post('/api/users')
+      .send(newUser)
+  })
+
   test('add a new blog', async () => {
     const blogsAtStart = await blogsInDb()
+    const usersAtStart = await usersInDb()
+    const userId = usersAtStart[0].id
 
     const newBlog = {
       title: 'A new blog',
       author: 'Cavendishh',
       url: 'https://fullstackopen.com/',
       likes: 0,
+      userId,
     }
 
     await api
@@ -60,10 +76,14 @@ describe('Blogs POST', () => {
   })
 
   test('if no likes defined default to 0', async () => {
+    const usersAtStart = await usersInDb()
+    const userId = usersAtStart[0].id
+
     const newBlog = {
       title: 'A new blog',
       author: 'Cavendishh',
       url: 'https://fullstackopen.com/',
+      userId,
     }
 
     await api
