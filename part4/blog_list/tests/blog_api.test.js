@@ -38,7 +38,7 @@ describe('POST blogs', () => {
 
     const newBlog = {
       title: 'A new blog',
-      author: 'Tester',
+      author: 'Cavendishh',
       url: 'https://fullstackopen.com/',
       likes: 0,
     }
@@ -56,10 +56,10 @@ describe('POST blogs', () => {
     expect(blogTitles).toContain(newBlog.title)
   })
 
-  test('if new blog has no likes defined', async () => {
+  test('if no likes defined default to 0', async () => {
     const newBlog = {
       title: 'A new blog',
-      author: 'Tester',
+      author: 'Cavendishh',
       url: 'https://fullstackopen.com/',
     }
 
@@ -75,6 +75,22 @@ describe('POST blogs', () => {
     )
 
     expect(savedBlog.likes).toBe(0)
+  })
+
+  test('if title and url are missing throw status code 400', async () => {
+    const newBlog = {
+      author: 'Cavendishh',
+      likes: 0,
+    }
+
+    // prettier-ignore
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   })
 })
 
