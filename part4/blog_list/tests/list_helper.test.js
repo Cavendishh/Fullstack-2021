@@ -32,7 +32,9 @@ describe('Favorite blog', () => {
       likes: 12,
     })
   })
+})
 
+describe('Biggest author', () => {
   test('most blogs created by author', () => {
     const result = listHelper.mostBlogs(blogs.all)
     expect(result).toEqual({
