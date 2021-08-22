@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
-const { initialBlogs, blogsInDb, usersInDb } = require('./test_helper')
+const { initialBlogs, newUser, blogsInDb, usersInDb } = require('./test_helper')
 const supertest = require('supertest')
 const app = require('../app')
 const bcrypt = require('bcrypt')
@@ -36,17 +36,24 @@ describe('Blogs GET', () => {
 })
 
 describe('Blogs POST', () => {
+  let headers
+
   beforeEach(async () => {
-    const newUser = {
-      username: 'root',
-      name: 'root',
-      password: 'root',
-    }
+    await User.deleteMany({})
 
     // prettier-ignore
     await api
       .post('/api/users')
       .send(newUser)
+
+    // prettier-ignore
+    const result = await api
+      .post('/api/login')
+      .send(newUser)
+
+    headers = {
+      Authorization: `bearer ${result.body.token}`,
+    }
   })
 
   test('add a new blog', async () => {
@@ -65,6 +72,7 @@ describe('Blogs POST', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set(headers)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
@@ -89,11 +97,12 @@ describe('Blogs POST', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set(headers)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await blogsInDb()
-    const savedBlog = await blogsAtEnd.find(
+    const savedBlog = blogsAtEnd.find(
       (b) => b.title === newBlog.title && b.author === newBlog.author
     )
 
@@ -110,6 +119,7 @@ describe('Blogs POST', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set(headers)
       .expect(400)
 
     const blogsAtEnd = await blogsInDb()
@@ -142,18 +152,53 @@ describe('Blogs PUT', () => {
 })
 
 describe('Blogs DELETE', () => {
+  let headers
+
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    // prettier-ignore
+    await api
+      .post('/api/users')
+      .send(newUser)
+
+    // prettier-ignore
+    const result = await api
+      .post('/api/login')
+      .send(newUser)
+
+    headers = {
+      Authorization: `bearer ${result.body.token}`,
+    }
+  })
+
   test('deletes with status code of 204 if id is valid', async () => {
+    const newBlog = {
+      title: 'This blog will be deleted',
+      author: 'Tester32',
+      url: 'www.testingIsImportant.com',
+      likes: '321',
+    }
+
+    // prettier-ignore
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set(headers)
+      .expect(200)
+
     const blogsAtStart = await blogsInDb()
-    const blogToDelete = blogsAtStart[0]
+    const blogToDelete = blogsAtStart[blogsAtStart.length - 1]
 
     // prettier-ignore
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set(headers)
       .expect(204)
 
     const blogsAtEnd = await blogsInDb()
 
-    expect(blogsAtEnd).toHaveLength(initialBlogs.length - 1)
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
 
     const blogTitles = blogsAtEnd.map((b) => b.title)
 
@@ -183,7 +228,7 @@ describe('Users POST', () => {
   test('new user created', async () => {
     const usersAtStart = await usersInDb()
 
-    const newUser = {
+    const newUser2 = {
       username: 'Cavendishh',
       name: 'Janne Kavander',
       password: 'fullStack',
@@ -191,7 +236,7 @@ describe('Users POST', () => {
 
     await api
       .post('/api/users')
-      .send(newUser)
+      .send(newUser2)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
@@ -199,17 +244,11 @@ describe('Users POST', () => {
     expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
     const usernames = usersAtEnd.map((u) => u.username)
-    expect(usernames).toContain(newUser.username)
+    expect(usernames).toContain(newUser2.username)
   })
 
   test('if username exists already throw status code 400', async () => {
     const usersAtStart = await usersInDb()
-
-    const newUser = {
-      username: 'root',
-      name: 'superAdmin',
-      password: 'root',
-    }
 
     const result = await api
       .post('/api/users')
@@ -226,14 +265,14 @@ describe('Users POST', () => {
   test('if username and/or password is shorter than the minimum allowed length (3)', async () => {
     const usersAtStart = await usersInDb()
 
-    const newUser = {
+    const newUser2 = {
       username: 'rt',
       name: 'Tester man',
     }
 
     const result = await api
       .post('/api/users')
-      .send(newUser)
+      .send(newUser2)
       .expect(400)
       .expect('Content-Type', /application\/json/)
 
