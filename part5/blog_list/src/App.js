@@ -5,12 +5,21 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
+  const [loggedUser, setLoggedUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => blogService.getAll().then((_blogs) => setBlogs(_blogs)), [])
 
   useEffect(() => {
-    blogService.getAll().then((_blogs) => setBlogs(_blogs))
+    const loggedUserJSON = window.localStorage.getItem('loggedUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+
+      setLoggedUser(user)
+      loginService.setToken(user.token)
+    }
   }, [])
 
   const onLogin = async (e) => {
@@ -18,23 +27,35 @@ const App = () => {
     console.log('Logging in with credentials >> ', username, ' -- ', password)
 
     try {
-      const _user = await loginService.login({
+      const user = await loginService.login({
         username,
         password,
       })
 
-      setUser(_user)
+      window.localStorage.setItem('loggedUser', JSON.stringify(user))
+
+      setLoggedUser(user)
     } catch (e) {
       console.log(e)
+      setError('Username or password is invalid')
+      setTimeout(() => {
+        setError(null)
+      }, 3000)
     }
   }
 
-  console.log(user)
+  const onLogout = () => {
+    window.localStorage.removeItem('loggedUser')
+    setLoggedUser(null)
+  }
 
-  if (user === null)
+  console.log(loggedUser)
+
+  if (loggedUser === null)
     return (
       <>
         <h2>Login page</h2>
+        {error}
         <form onSubmit={onLogin}>
           <p>Username</p>
           <input
@@ -60,7 +81,8 @@ const App = () => {
     <>
       <h2>blogs</h2>
       <p>
-        You are logged in as user <b>{user.username}</b>
+        You are logged in as user <b>{loggedUser.username} </b>
+        <button onClick={onLogout}>Log out</button>
       </p>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
