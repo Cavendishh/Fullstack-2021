@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const blogStyle = {
   paddingTop: 10,
@@ -36,6 +37,13 @@ const Blog = ({ blog, user, onLike, onDelete }) => {
       {showDetails && fullBlog()}
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  onLike: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 }
 
 export default Blog

@@ -150,16 +150,15 @@ const App = () => {
       </Togglable>
 
       <div>
-        {loggedUser &&
-          allBlogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              user={loggedUser}
-              onLike={onBlogLike}
-              onDelete={onBlogDelete}
-            />
-          ))}
+        {allBlogs.map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            user={loggedUser}
+            onLike={onBlogLike}
+            onDelete={onBlogDelete}
+          />
+        ))}
       </div>
     </>
   )
