@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -73,7 +73,7 @@ const App = () => {
 
         setNotificationMsg('success', `You created a blog titled ${res.title}`)
       })
-      .catch((err) => setNotificationMsg('error', 'You were not able to create a blog'))
+      .catch(() => setNotificationMsg('error', 'You were not able to create a blog'))
   }
 
   const onBlogLike = (blog) => {
@@ -90,7 +90,7 @@ const App = () => {
 
         setNotificationMsg('success', `You liked a blog titled ${res.title}`)
       })
-      .catch((err) => setNotificationMsg('error', 'You were not able to like a blog'))
+      .catch(() => setNotificationMsg('error', 'You were not able to like a blog'))
   }
 
   const onBlogDelete = (id) => {
@@ -102,9 +102,9 @@ const App = () => {
         const arr = allBlogs.filter((b) => b.id !== id)
         setNewBlogs(arr)
 
-        setNotificationMsg('success', `You deleted a blog`)
+        setNotificationMsg('success', 'You deleted a blog')
       })
-      .catch((err) => setNotificationMsg('error', 'You were not able to delete a blog'))
+      .catch(() => setNotificationMsg('error', 'You were not able to delete a blog'))
   }
 
   if (loggedUser === null)
