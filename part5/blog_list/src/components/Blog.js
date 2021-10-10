@@ -1,23 +1,21 @@
 import { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const blogStyle = {
+  paddingTop: 10,
+  paddingLeft: 2,
+  border: 'solid',
+  borderWidth: 1,
+  marginBottom: 5,
+}
+
+const Blog = ({ blog, onLike }) => {
   const [showDetails, setShowDetails] = useState(false)
-
-  console.log(blog)
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
 
   const fullBlog = () => (
     <>
       <p>{blog.url}</p>
       <p>
-        {blog.likes} <button>like</button>
+        {blog.likes} <button onClick={() => onLike(blog)}>like</button>
       </p>
       <p>{blog.author}</p>
     </>
@@ -26,7 +24,7 @@ const Blog = ({ blog }) => {
   return (
     <div style={blogStyle}>
       <p>
-        {blog.title}{' '}
+        {blog.title}
         <button onClick={() => setShowDetails(!showDetails)}>
           {showDetails ? 'Hide' : 'Show'}
         </button>

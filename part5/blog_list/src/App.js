@@ -71,6 +71,23 @@ const App = () => {
       .catch((err) => setNotificationMsg('error', 'You were not able to create a blog'))
   }
 
+  const onLike = (blog) => {
+    blog = { ...blog, likes: blog.likes + 1 }
+
+    blogService
+      .update(blog)
+      .then((res) => {
+        const blogsArr = allBlogs.map((b) => {
+          return b.id === res.id ? res : b
+        })
+
+        setAllBlogs(blogsArr)
+
+        setNotificationMsg('success', `You liked a blog titled ${res.title}`)
+      })
+      .catch((err) => setNotificationMsg('error', 'You were not able to like a blog'))
+  }
+
   if (loggedUser === null)
     return (
       <>
@@ -115,7 +132,7 @@ const App = () => {
 
       <div>
         {allBlogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} onLike={onLike} />
         ))}
       </div>
     </>
