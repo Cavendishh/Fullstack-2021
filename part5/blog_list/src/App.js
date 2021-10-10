@@ -15,7 +15,12 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  useEffect(() => blogService.getAll().then((blogs) => setAllBlogs(blogs)), [])
+  const setNewBlogs = (blogs) => {
+    const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+    setAllBlogs(sortedBlogs)
+  }
+
+  useEffect(() => blogService.getAll().then((blogs) => setNewBlogs(blogs)), [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -59,11 +64,11 @@ const App = () => {
     setNotificationMsg('success', 'Succesfully logged out')
   }
 
-  const onBlogCreate = (newBlog) => {
+  const onBlogCreate = (blog) => {
     blogService
-      .create(newBlog)
+      .create(blog)
       .then((res) => {
-        setAllBlogs(allBlogs.concat(res))
+        setNewBlogs(allBlogs.concat(res))
         blogFormRef.current.toggleVisibility()
 
         setNotificationMsg('success', `You created a blog titled ${res.title}`)
@@ -71,7 +76,7 @@ const App = () => {
       .catch((err) => setNotificationMsg('error', 'You were not able to create a blog'))
   }
 
-  const onLike = (blog) => {
+  const onBlogLike = (blog) => {
     blog = { ...blog, likes: blog.likes + 1 }
 
     blogService
@@ -81,11 +86,25 @@ const App = () => {
           return b.id === res.id ? res : b
         })
 
-        setAllBlogs(blogsArr)
+        setNewBlogs(blogsArr)
 
         setNotificationMsg('success', `You liked a blog titled ${res.title}`)
       })
       .catch((err) => setNotificationMsg('error', 'You were not able to like a blog'))
+  }
+
+  const onBlogDelete = (id) => {
+    if (!window.confirm('Are you sure you want to delete this blog?')) return
+
+    blogService
+      .remove(id)
+      .then(() => {
+        const arr = allBlogs.filter((b) => b.id !== id)
+        setNewBlogs(arr)
+
+        setNotificationMsg('success', `You deleted a blog`)
+      })
+      .catch((err) => setNotificationMsg('error', 'You were not able to delete a blog'))
   }
 
   if (loggedUser === null)
@@ -131,9 +150,16 @@ const App = () => {
       </Togglable>
 
       <div>
-        {allBlogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} onLike={onLike} />
-        ))}
+        {loggedUser &&
+          allBlogs.map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              user={loggedUser}
+              onLike={onBlogLike}
+              onDelete={onBlogDelete}
+            />
+          ))}
       </div>
     </>
   )

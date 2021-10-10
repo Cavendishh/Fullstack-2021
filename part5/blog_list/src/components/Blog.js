@@ -8,8 +8,10 @@ const blogStyle = {
   marginBottom: 5,
 }
 
-const Blog = ({ blog, onLike }) => {
+const Blog = ({ blog, user, onLike, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false)
+
+  const isOwner = blog.user.id === user.id || blog.user === user.id
 
   const fullBlog = () => (
     <>
@@ -18,6 +20,7 @@ const Blog = ({ blog, onLike }) => {
         {blog.likes} <button onClick={() => onLike(blog)}>like</button>
       </p>
       <p>{blog.author}</p>
+      {isOwner && <button onClick={() => onDelete(blog.id)}>Remove blog</button>}
     </>
   )
 
