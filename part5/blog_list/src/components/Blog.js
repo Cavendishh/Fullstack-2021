@@ -12,8 +12,6 @@ const blogStyle = {
 const Blog = ({ blog, user, onLike, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false)
 
-  console.log(blog)
-
   const isOwner = blog.user.id === user.id || blog.user === user.id
 
   const fullBlog = () => (

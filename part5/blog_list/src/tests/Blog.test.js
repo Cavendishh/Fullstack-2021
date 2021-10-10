@@ -1,6 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 // import { prettyDOM } from '@testing-library/dom'
 import Blog from '../components/Blog'
 
@@ -19,19 +19,30 @@ describe('<Blog />', () => {
     id: 'f89dasf778r78sadf764372a',
   }
 
-  test('All fields render correctly', () => {
-    const mockHandler = jest.fn()
+  let component
 
-    const component = render(
-      <Blog blog={blog} user={user} onLike={mockHandler} onDelete={mockHandler} />
+  beforeEach(() => {
+    const dummyHandler = jest.fn()
+
+    component = render(
+      <Blog blog={blog} user={user} onLike={dummyHandler} onDelete={dummyHandler} />
     )
+  })
 
-    component.debug()
-
+  test('normally only title and author is rendered', () => {
     const expectedText = `${blog.title} written by ${blog.author}`
 
     expect(component.container).toHaveTextContent(expectedText)
+
     expect(component.container).not.toHaveTextContent('likes')
     expect(component.container).not.toHaveTextContent('url')
+  })
+
+  test('after clicking button, url and likes are shown', () => {
+    const button = component.getByText('Show')
+    fireEvent.click(button)
+
+    expect(component.container).toHaveTextContent('likes')
+    expect(component.container).toHaveTextContent('url')
   })
 })
