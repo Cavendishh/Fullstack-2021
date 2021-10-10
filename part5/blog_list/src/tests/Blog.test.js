@@ -1,7 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render, fireEvent } from '@testing-library/react'
-// import { prettyDOM } from '@testing-library/dom'
 import Blog from '../components/Blog'
 
 describe('<Blog />', () => {
@@ -37,20 +36,20 @@ describe('<Blog />', () => {
   })
 
   test('after clicking button, url and likes are shown', () => {
-    const button = component.getByText('Show')
-    fireEvent.click(button)
+    const showBtn = component.getByText('Show')
+    fireEvent.click(showBtn)
 
     expect(component.container).toHaveTextContent('likes')
     expect(component.container).toHaveTextContent('url')
   })
 
   test('after clicking button, url and likes are shown', () => {
-    const showButton = component.getByText('Show')
-    fireEvent.click(showButton)
+    const showBtn = component.getByText('Show')
+    fireEvent.click(showBtn)
 
-    const likeButton = component.container.querySelector('#like-btn')
-    fireEvent.click(likeButton)
-    fireEvent.click(likeButton)
+    const likeBtn = component.container.querySelector('#like-btn')
+    fireEvent.click(likeBtn)
+    fireEvent.click(likeBtn)
 
     expect(onLike.mock.calls).toHaveLength(2)
   })
