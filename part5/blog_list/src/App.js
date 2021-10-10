@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -13,7 +14,7 @@ const App = () => {
     author: '',
     url: '',
   })
-  const [error, setError] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => blogService.getAll().then((blogs) => setAllBlogs(blogs)), [])
 
@@ -27,9 +28,16 @@ const App = () => {
     }
   }, [])
 
+  const setNotificationMsg = (type, message) => {
+    setNotification({ type, message })
+
+    setTimeout(() => {
+      setNotification({ type: '', message: '' })
+    }, 4000)
+  }
+
   const onLogin = async (e) => {
     e.preventDefault()
-    console.log('Logging in with credentials >> ', username, ' -- ', password)
 
     try {
       const user = await loginService.login({
@@ -40,24 +48,27 @@ const App = () => {
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
 
       setLoggedUser(user)
-    } catch (e) {
-      console.log(e)
-      setError('Username or password is invalid')
-      setTimeout(() => {
-        setError(null)
-      }, 3000)
+    } catch (err) {
+      setNotificationMsg('error', 'Username or password is invalid')
     }
   }
 
   const onLogout = () => {
     window.localStorage.removeItem('loggedUser')
     setLoggedUser(null)
+    setNotificationMsg('success', 'Succesfully logged out')
   }
 
   const onBlogCreate = (e) => {
     e.preventDefault()
 
-    blogService.create(newBlog).then((res) => setAllBlogs(allBlogs.concat(res)))
+    blogService
+      .create(newBlog)
+      .then((res) => {
+        setAllBlogs(allBlogs.concat(res))
+        setNotificationMsg('success', `You created a blog titled ${res.title}`)
+      })
+      .catch((err) => setNotificationMsg('error', 'You were not able to create a blog'))
   }
 
   const onChangeNewBlog = ({ target }) => {
@@ -68,7 +79,9 @@ const App = () => {
     return (
       <>
         <h2>Login page</h2>
-        {error}
+
+        <Notification notification={notification} />
+
         <form onSubmit={onLogin}>
           <p>Username</p>
           <input
@@ -97,6 +110,9 @@ const App = () => {
         You are logged in as user <b>{loggedUser.username} </b>
         <button onClick={onLogout}>Log out</button>
       </p>
+
+      <Notification notification={notification} />
+
       <form onSubmit={onBlogCreate}>
         <div>
           Title
