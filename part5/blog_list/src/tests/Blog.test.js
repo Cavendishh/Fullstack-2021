@@ -20,13 +20,11 @@ describe('<Blog />', () => {
   }
 
   let component
+  const onLike = jest.fn()
+  const onDelete = jest.fn()
 
   beforeEach(() => {
-    const dummyHandler = jest.fn()
-
-    component = render(
-      <Blog blog={blog} user={user} onLike={dummyHandler} onDelete={dummyHandler} />
-    )
+    component = render(<Blog blog={blog} user={user} onLike={onLike} onDelete={onDelete} />)
   })
 
   test('normally only title and author is rendered', () => {
@@ -44,5 +42,16 @@ describe('<Blog />', () => {
 
     expect(component.container).toHaveTextContent('likes')
     expect(component.container).toHaveTextContent('url')
+  })
+
+  test('after clicking button, url and likes are shown', () => {
+    const showButton = component.getByText('Show')
+    fireEvent.click(showButton)
+
+    const likeButton = component.container.querySelector('#like-btn')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+
+    expect(onLike.mock.calls).toHaveLength(2)
   })
 })

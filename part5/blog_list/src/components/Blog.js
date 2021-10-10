@@ -19,7 +19,9 @@ const Blog = ({ blog, user, onLike, onDelete }) => {
       <p>url: {blog.url}</p>
       <p>
         likes: {blog.likes}&nbsp;
-        <button onClick={() => onLike(blog)}>like</button>
+        <button onClick={() => onLike(blog)} id='like-btn'>
+          like
+        </button>
       </p>
       {isOwner && <button onClick={() => onDelete(blog.id)}>Remove blog</button>}
     </>
