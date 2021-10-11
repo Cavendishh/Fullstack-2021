@@ -53,6 +53,7 @@ const App = () => {
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
 
       setLoggedUser(user)
+      setNotificationMsg('success', 'Succesfully logged in')
     } catch (err) {
       setNotificationMsg('error', 'Username or password is invalid')
     }
@@ -120,6 +121,7 @@ const App = () => {
             type='text'
             value={username}
             name='username'
+            id='username-input'
             onChange={({ target }) => setUsername(target.value)}
           />
 
@@ -128,9 +130,12 @@ const App = () => {
             type='text'
             value={password}
             name='password'
+            id='password-input'
             onChange={({ target }) => setPassword(target.value)}
           />
-          <button type='submit'>Log in</button>
+          <button type='submit' id='login-button'>
+            Log in
+          </button>
         </form>
       </>
     )
