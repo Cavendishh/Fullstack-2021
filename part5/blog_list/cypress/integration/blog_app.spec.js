@@ -9,6 +9,11 @@ describe('Blog app', function () {
     author: 'Test author',
     url: 'www.testurl.fi',
   }
+  const blog2 = {
+    title: 'New title2',
+    author: 'Test author2',
+    url: 'www.testurl2.fi',
+  }
 
   beforeEach(function () {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
@@ -41,18 +46,12 @@ describe('Blog app', function () {
     })
   })
 
-  describe('When logged in', function () {
+  describe('when logged in', function () {
     beforeEach(function () {
-      cy.request('POST', 'http://localhost:3003/api/login', {
-        username: user.username,
-        password: user.password,
-      }).then((res) => {
-        localStorage.setItem('loggedUser', JSON.stringify(res.body))
-        cy.visit('http://localhost:3000')
-      })
+      cy.login({ username: user.username, password: user.password })
     })
 
-    it.only('a blog can be created', function () {
+    it('a blog can be created', function () {
       cy.contains('Create a blog').click()
       cy.get('#title-input').type(blog.title)
       cy.get('#author-input').type(blog.author)
@@ -60,6 +59,15 @@ describe('Blog app', function () {
       cy.get('#create-blog-btn').click()
 
       cy.contains(blog.title)
+    })
+
+    describe('and when a blog exist', function () {
+      it.only('the blog can be liked', function () {
+        cy.createBlog(blog)
+        cy.contains(blog.title).parent().find('button').click()
+        cy.contains('like').click()
+        cy.contains('likes: 1')
+      })
     })
   })
 })
