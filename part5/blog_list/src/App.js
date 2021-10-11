@@ -114,7 +114,7 @@ const App = () => {
 
         <Notification notification={notification} />
 
-        <form onSubmit={onLogin}>
+        <form onSubmit={onLogin} id='login-form'>
           <p>Username</p>
           <input
             type='text'
