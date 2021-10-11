@@ -62,11 +62,19 @@ describe('Blog app', function () {
     })
 
     describe('and when a blog exist', function () {
-      it.only('the blog can be liked', function () {
+      it('the blog can be liked', function () {
         cy.createBlog(blog)
-        cy.contains(blog.title).parent().find('button').click()
+
         cy.contains('like').click()
         cy.contains('likes: 1')
+      })
+
+      it('the blog can be deleted', function () {
+        cy.createBlog(blog)
+
+        cy.contains('Remove blog').click()
+        cy.get('html').should('not.contain', 'New title')
+        cy.get('html').should('contain', 'You deleted a blog')
       })
     })
   })
