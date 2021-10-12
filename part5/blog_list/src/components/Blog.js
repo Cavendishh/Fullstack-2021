@@ -28,7 +28,7 @@ const Blog = ({ blog, user, onLike, onDelete }) => {
   )
 
   return (
-    <div style={blogStyle} id={`blog-post-${blog.id}`}>
+    <div className='blog-post' style={blogStyle} id={`blog-post-${blog.id}`}>
       <p>
         <b>{blog.title}</b> written by {blog.author}&nbsp;
         <button onClick={() => setShowDetails(!showDetails)}>

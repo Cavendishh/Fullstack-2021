@@ -11,8 +11,13 @@ describe('Blog app', function () {
   }
   const blog2 = {
     title: 'New title2',
-    author: 'Test author2',
+    author: 'Test author3',
     url: 'www.testurl2.fi',
+  }
+  const blog3 = {
+    title: 'New title3',
+    author: 'Test author2',
+    url: 'www.testurl3.fi',
   }
 
   beforeEach(function () {
@@ -62,19 +67,63 @@ describe('Blog app', function () {
     })
 
     describe('and when a blog exist', function () {
-      it('the blog can be liked', function () {
+      beforeEach(function () {
         cy.createBlog(blog)
+        cy.contains(blog.title).parent().find('button').as('show-button')
+      })
 
+      it('the blog can be liked', function () {
+        cy.get('@show-button').click()
         cy.contains('like').click()
         cy.contains('likes: 1')
       })
 
       it('the blog can be deleted', function () {
-        cy.createBlog(blog)
-
+        cy.get('@show-button').click()
         cy.contains('Remove blog').click()
         cy.get('html').should('not.contain', 'New title')
         cy.get('html').should('contain', 'You deleted a blog')
+      })
+    })
+
+    describe('and when many blogs exist', function () {
+      beforeEach(function () {
+        cy.createBlog(blog)
+        cy.createBlog(blog2)
+        cy.createBlog(blog3)
+
+        cy.contains(blog.title).parent().parent().as('blog1')
+        cy.contains(blog2.title).parent().parent().as('blog2')
+        cy.contains(blog3.title).parent().parent().as('blog3')
+      })
+
+      it('blogs are arranged by most likes', function () {
+        cy.get('@blog1').contains('Show').click()
+        cy.get('@blog2').contains('Show').click()
+        cy.get('@blog3').contains('Show').click()
+        cy.get('@blog1').contains('like').as('like1')
+        cy.get('@blog2').contains('like').as('like2')
+        cy.get('@blog3').contains('like').as('like3')
+
+        cy.get('@like3').click()
+        cy.get('@blog3').contains('likes: 1')
+
+        cy.get('@like2').click()
+        cy.get('@blog2').contains('likes: 1')
+        cy.get('@like2').click()
+        cy.get('@blog2').contains('likes: 2')
+
+        cy.get('.blog-post').then((blogs) => {
+          console.log('Blogs', blogs)
+          cy.wrap(blogs[0]).contains('likes: 2')
+          cy.wrap(blogs[0]).contains(blog2.title)
+
+          cy.wrap(blogs[1]).contains('likes: 1')
+          cy.wrap(blogs[1]).contains(blog3.title)
+
+          cy.wrap(blogs[2]).contains('likes: 0')
+          cy.wrap(blogs[2]).contains(blog.title)
+        })
       })
     })
   })

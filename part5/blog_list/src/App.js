@@ -154,7 +154,7 @@ const App = () => {
         <BlogForm onBlogCreate={onBlogCreate} />
       </Togglable>
 
-      <div>
+      <div id='blogs-div'>
         {allBlogs.map((blog) => (
           <Blog
             key={blog.id}

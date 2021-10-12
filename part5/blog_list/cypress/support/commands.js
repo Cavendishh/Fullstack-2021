@@ -19,5 +19,5 @@ Cypress.Commands.add('createBlog', ({ title, author, url }) => {
   })
 
   cy.visit('http://localhost:3000')
-  cy.contains(title).parent().find('button').click()
+  // cy.contains(title).parent().find('button').click()
 })
