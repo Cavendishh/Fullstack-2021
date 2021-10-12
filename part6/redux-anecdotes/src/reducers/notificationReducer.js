@@ -3,20 +3,21 @@ const notificationReducer = (state = '', action) => {
     case 'SET_NOTIFICATION':
       return action.payload
 
-    case 'CLEAR_NOTIFICATION':
-      return ''
-
     default:
       return state
   }
 }
 
-export const setNotification = (message) => {
-  return { type: 'SET_NOTIFICATION', payload: message }
-}
+export const setNotification = (message, time = 3) => {
+  return async (dispatch) => {
+    console.log('1')
+    dispatch({ type: 'SET_NOTIFICATION', payload: message })
 
-export const clearNotification = () => {
-  return { type: 'CLEAR_NOTIFICATION', payload: '' }
+    setTimeout(() => {
+      console.log('2')
+      dispatch({ type: 'SET_NOTIFICATION', payload: '' })
+    }, time * 1000)
+  }
 }
 
 export default notificationReducer
