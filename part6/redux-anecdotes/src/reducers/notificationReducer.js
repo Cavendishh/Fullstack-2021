@@ -18,7 +18,7 @@ export const setNotification = (message) => {
   return { type: 'SET_NOTIFICATION', payload: message }
 }
 
-export const clearNotification = (anecdote) => {
+export const clearNotification = () => {
   return { type: 'CLEAR_NOTIFICATION', payload: '' }
 }
 
