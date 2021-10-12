@@ -114,7 +114,6 @@ describe('Blog app', function () {
         cy.get('@blog2').contains('likes: 2')
 
         cy.get('.blog-post').then((blogs) => {
-          console.log('Blogs', blogs)
           cy.wrap(blogs[0]).contains('likes: 2')
           cy.wrap(blogs[0]).contains(blog2.title)
 
