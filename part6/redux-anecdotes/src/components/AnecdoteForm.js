@@ -1,5 +1,5 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { createAnecdote } from '../reducers/anecdoteReducer'
 import { setNotification } from '../reducers/notificationReducer'
@@ -7,13 +7,16 @@ import { setNotification } from '../reducers/notificationReducer'
 const AnecdoteForm = () => {
   const dispatch = useDispatch()
 
+  const timeoutId = useSelector((state) => state.notification.timeoutId)
+
   const addAnecdote = async (e) => {
     e.preventDefault()
+    console.log('here', timeoutId)
 
     const anecdote = e.target.anecdote.value
     e.target.anecdote.value = ''
 
-    dispatch(setNotification(`Created new anecdote '${anecdote}'`), 3)
+    dispatch(setNotification(`Created new anecdote '${anecdote}'`, 5, timeoutId))
     dispatch(createAnecdote(anecdote))
   }
 

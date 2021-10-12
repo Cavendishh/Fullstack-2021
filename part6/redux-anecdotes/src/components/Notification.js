@@ -9,7 +9,7 @@ const style = {
 }
 
 const Notification = () => {
-  const notification = useSelector((state) => state.notification)
+  const notification = useSelector((state) => state.notification.message)
 
   if (!notification) return null
 

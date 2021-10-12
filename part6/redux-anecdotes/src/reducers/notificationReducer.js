@@ -1,6 +1,7 @@
-const notificationReducer = (state = '', action) => {
+const notificationReducer = (state = {}, action) => {
   switch (action.type) {
     case 'SET_NOTIFICATION':
+      console.log('BAYLOAD', action.payload)
       return action.payload
 
     default:
@@ -8,15 +9,15 @@ const notificationReducer = (state = '', action) => {
   }
 }
 
-export const setNotification = (message, time = 3) => {
+export const setNotification = (message, time = 5, timeoutId) => {
   return async (dispatch) => {
-    console.log('1')
-    dispatch({ type: 'SET_NOTIFICATION', payload: message })
+    if (timeoutId) clearTimeout(timeoutId)
 
-    setTimeout(() => {
-      console.log('2')
-      dispatch({ type: 'SET_NOTIFICATION', payload: '' })
+    const newTimeoutId = setTimeout(() => {
+      dispatch({ type: 'SET_NOTIFICATION', payload: { message: '', timeoutId: null } })
     }, time * 1000)
+
+    dispatch({ type: 'SET_NOTIFICATION', payload: { message, timeoutId: newTimeoutId } })
   }
 }
 

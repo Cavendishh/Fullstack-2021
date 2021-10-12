@@ -6,9 +6,7 @@ import { setFilter } from '../reducers/filterReducer'
 const Filter = () => {
   const dispatch = useDispatch()
 
-  const onFilter = ({ target }) => {
-    dispatch(setFilter(target.value))
-  }
+  const onFilter = ({ target }) => dispatch(setFilter(target.value))
 
   return (
     <p>
