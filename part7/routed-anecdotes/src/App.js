@@ -111,6 +111,14 @@ const CreateNew = ({ addNew, setNotification }) => {
     }, 10 * 1000)
   }
 
+  const onReset = (e) => {
+    e.preventDefault()
+
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
   return (
     <div>
       <h2>Create a new anecdote</h2>
@@ -130,7 +138,8 @@ const CreateNew = ({ addNew, setNotification }) => {
           <input {...info} />
         </div>
 
-        <button>create</button>
+        <button style={{ marginRight: 16 }}>create</button>
+        <button onClick={onReset}>reset</button>
       </form>
     </div>
   )
