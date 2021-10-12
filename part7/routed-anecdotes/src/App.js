@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Link, useRouteMatch } from 'react-router-dom'
 
 const Menu = () => {
   const padding = {
@@ -25,9 +25,15 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map((anecdote) => (
-        <li key={anecdote.id}>{anecdote.content}</li>
-      ))}
+      {anecdotes.map((anecdote) => {
+        const { id, content } = anecdote
+
+        return (
+          <li key={id}>
+            <Link to={`/anecdotes/${id}`}>{content}</Link>
+          </li>
+        )
+      })}
     </ul>
   </div>
 )
@@ -52,6 +58,20 @@ const About = () => (
     </p>
   </div>
 )
+
+const Anecdote = ({ anecdote: { content, author, info, votes } }) => {
+  return (
+    <>
+      <h2>
+        {content} by {author}
+      </h2>
+      <p>has {votes} votes</p>
+      <p>
+        for more info see <a href={info}>{info}</a>
+      </p>
+    </>
+  )
+}
 
 const Footer = () => (
   <div>
@@ -87,14 +107,17 @@ const CreateNew = (props) => {
           content
           <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
         </div>
+
         <div>
           author
           <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
         </div>
+
         <div>
           url for more info
           <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
         </div>
+
         <button>create</button>
       </form>
     </div>
@@ -139,11 +162,20 @@ const App = () => {
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)))
   }
 
+  const match = useRouteMatch('/anecdotes/:id')
+
+  console.log(match)
+  const anecdote = match ? anecdoteById(match.params.id) : null
+
   return (
-    <Router>
+    <>
       <Menu />
 
       <Switch>
+        <Route path='/anecdotes/:id'>
+          <Anecdote anecdote={anecdote} />
+        </Route>
+
         <Route path='/new'>
           <CreateNew addNew={addNew} />
         </Route>
@@ -158,7 +190,7 @@ const App = () => {
       </Switch>
 
       <Footer />
-    </Router>
+    </>
   )
 }
 
