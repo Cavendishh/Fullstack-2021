@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setNotification } from './reducers/notificationReducer'
-import { byLikes, initializeBlogs, createBlog } from './reducers/blogReducer'
+import { byLikes, initializeBlogs, createBlog, likeBlog, removeBlog } from './reducers/blogReducer'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -72,39 +72,26 @@ const App = () => {
     }
   }
 
-  const onBlogLike = (blog) => {
-    blog = { ...blog, likes: blog.likes + 1 }
+  const onBlogLike = async (blog) => {
+    try {
+      await dispatch(likeBlog(blog))
 
-    blogService
-      .update(blog)
-      .then((res) => {
-        // const blogsArr = allBlogs.map((b) => {
-        //   return b.id === res.id ? res : b
-        // })
-
-        // setNewBlogs(blogsArr)
-
-        dispatch(setNotification('success', `You liked a blog titled ${res.title}`, timeoutId))
-      })
-      .catch(() => {
-        dispatch(setNotification('error', 'You were not able to like a blog', timeoutId))
-      })
+      dispatch(setNotification('success', `You liked a blog titled ${blog.title}`, timeoutId))
+    } catch (err) {
+      dispatch(setNotification('error', 'You were not able to like a blog', timeoutId))
+    }
   }
 
-  const onBlogDelete = (id) => {
+  const onBlogDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this blog?')) return
 
-    blogService
-      .remove(id)
-      .then(() => {
-        // const arr = allBlogs.filter((b) => b.id !== id)
-        // setNewBlogs(arr)
+    try {
+      await dispatch(removeBlog(id))
 
-        dispatch(setNotification('success', 'You deleted a blog', timeoutId))
-      })
-      .catch(() => {
-        dispatch(setNotification('error', 'You were not able to delete a blog', timeoutId))
-      })
+      dispatch(setNotification('success', 'You deleted a blog', timeoutId))
+    } catch (err) {
+      dispatch(setNotification('error', 'You were not able to delete a blog', timeoutId))
+    }
   }
 
   if (loggedUser === null)

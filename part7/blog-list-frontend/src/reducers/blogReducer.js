@@ -5,11 +5,21 @@ const blogReducer = (state = [], action) => {
     case 'INIT_BLOGS':
       return action.payload
 
-    case 'ADD_VOTE':
-      return state
+    case 'NEW_BLOG': {
+      const blog = action.payload
+      return [...state, blog]
+    }
 
-    case 'NEW_BLOG':
-      return [...state, action.payload]
+    case 'UPDATE_BLOG': {
+      const blog = action.payload
+      return state.map((b) => (b.id === blog.id ? blog : b))
+    }
+
+    case 'REMOVE_BLOG': {
+      const deleteId = action.payload
+
+      return state.filter((b) => b.id !== deleteId)
+    }
 
     default:
       return state
@@ -26,19 +36,29 @@ export const initializeBlogs = () => {
   }
 }
 
-// export const addVote = (anecdote) => {
-//   return async (dispatch) => {
-//     const anecdoteObj = await blogService.vote(anecdote)
-
-//     dispatch({ type: 'ADD_VOTE', payload: anecdoteObj })
-//   }
-// }
-
-export const createBlog = (newBlog) => {
+export const createBlog = (blogObj) => {
   return async (dispatch) => {
-    const blog = await blogService.create(newBlog)
+    const blog = await blogService.create(blogObj)
 
     dispatch({ type: 'NEW_BLOG', payload: blog })
+  }
+}
+
+export const likeBlog = (blogObj) => {
+  return async (dispatch) => {
+    blogObj = { ...blogObj, likes: blogObj.likes + 1 }
+
+    const blog = await blogService.update(blogObj)
+
+    dispatch({ type: 'UPDATE_BLOG', payload: blog })
+  }
+}
+
+export const removeBlog = (id) => {
+  return async (dispatch) => {
+    await blogService.remove(id)
+
+    dispatch({ type: 'REMOVE_BLOG', payload: id })
   }
 }
 
