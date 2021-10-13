@@ -1,64 +1,50 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import { login, logout, checkAuth } from './reducers/authReducer'
 import { setNotification } from './reducers/notificationReducer'
 import { byLikes, initializeBlogs, createBlog, likeBlog, removeBlog } from './reducers/blogReducer'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
-import blogService from './services/blogs'
-import loginService from './services/login'
 
 const App = () => {
   const dispatch = useDispatch()
   const timeoutId = useSelector((state) => state.notification.timeoutId)
+  const auth = useSelector((state) => state.auth)
   let allBlogs = useSelector((state) => state.blogs)
 
-  console.log('allblogs', allBlogs)
-
-  const [loggedUser, setLoggedUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const blogFormRef = useRef()
 
-  useEffect(() => dispatch(initializeBlogs()), [])
-
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedUser')
-
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-
-      setLoggedUser(user)
-      blogService.setToken(user.token)
-    }
+    dispatch(checkAuth())
+    dispatch(initializeBlogs())
   }, [])
 
-  const onLogin = (e) => {
+  const onLogin = async (e) => {
     e.preventDefault()
 
-    loginService
-      .login({
-        username,
-        password,
-      })
-      .then((user) => {
-        window.localStorage.setItem('loggedUser', JSON.stringify(user))
+    try {
+      await dispatch(login({ username, password }))
 
-        setLoggedUser(user)
-        dispatch(setNotification('success', 'Succesfully logged in', timeoutId))
-      })
-      .catch(() => {
-        dispatch(setNotification('error', 'Username or password is invalid', timeoutId))
-      })
+      dispatch(setNotification('success', 'Succesfully logged in', timeoutId))
+    } catch (err) {
+      dispatch(setNotification('error', 'Username or password is invalid', timeoutId))
+    }
   }
 
   const onLogout = () => {
-    window.localStorage.removeItem('loggedUser')
-    setLoggedUser(null)
-    dispatch(setNotification('success', 'Succesfully logged out', timeoutId))
+    try {
+      dispatch(logout())
+
+      dispatch(setNotification('success', 'Succesfully logged out', timeoutId))
+    } catch (err) {
+      dispatch(setNotification('error', 'Logging out failed', timeoutId))
+    }
   }
 
   const onBlogCreate = async (blog) => {
@@ -94,7 +80,7 @@ const App = () => {
     }
   }
 
-  if (loggedUser === null)
+  if (auth === null)
     return (
       <>
         <h2>Login page</h2>
@@ -130,7 +116,7 @@ const App = () => {
     <>
       <h2>blogs</h2>
       <p>
-        You are logged in as user <b>{loggedUser.username} </b>
+        You are logged in as user <b>{auth.username} </b>
         <button onClick={onLogout}>Log out</button>
       </p>
 
@@ -142,13 +128,7 @@ const App = () => {
 
       <div id='blogs-div'>
         {allBlogs.sort(byLikes).map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            user={loggedUser}
-            onLike={onBlogLike}
-            onDelete={onBlogDelete}
-          />
+          <Blog key={blog.id} blog={blog} user={auth} onLike={onBlogLike} onDelete={onBlogDelete} />
         ))}
       </div>
     </>
