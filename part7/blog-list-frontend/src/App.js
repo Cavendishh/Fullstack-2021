@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setNotification } from './reducers/notificationReducer'
+import { byLikes, initializeBlogs, createBlog } from './reducers/blogReducer'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -12,20 +13,17 @@ import loginService from './services/login'
 const App = () => {
   const dispatch = useDispatch()
   const timeoutId = useSelector((state) => state.notification.timeoutId)
+  let allBlogs = useSelector((state) => state.blogs)
 
-  const [allBlogs, setAllBlogs] = useState([])
+  console.log('allblogs', allBlogs)
+
   const [loggedUser, setLoggedUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const blogFormRef = useRef()
 
-  const setNewBlogs = (blogs) => {
-    const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
-    setAllBlogs(sortedBlogs)
-  }
-
-  useEffect(() => blogService.getAll().then((blogs) => setNewBlogs(blogs)), [])
+  useEffect(() => dispatch(initializeBlogs()), [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -38,22 +36,23 @@ const App = () => {
     }
   }, [])
 
-  const onLogin = async (e) => {
+  const onLogin = (e) => {
     e.preventDefault()
 
-    try {
-      const user = await loginService.login({
+    loginService
+      .login({
         username,
         password,
       })
+      .then((user) => {
+        window.localStorage.setItem('loggedUser', JSON.stringify(user))
 
-      window.localStorage.setItem('loggedUser', JSON.stringify(user))
-
-      setLoggedUser(user)
-      dispatch(setNotification('success', 'Succesfully logged in', timeoutId))
-    } catch (err) {
-      dispatch(setNotification('error', 'Username or password is invalid', timeoutId))
-    }
+        setLoggedUser(user)
+        dispatch(setNotification('success', 'Succesfully logged in', timeoutId))
+      })
+      .catch(() => {
+        dispatch(setNotification('error', 'Username or password is invalid', timeoutId))
+      })
   }
 
   const onLogout = () => {
@@ -62,18 +61,15 @@ const App = () => {
     dispatch(setNotification('success', 'Succesfully logged out', timeoutId))
   }
 
-  const onBlogCreate = (blog) => {
-    blogService
-      .create(blog)
-      .then((res) => {
-        setNewBlogs(allBlogs.concat(res))
-        blogFormRef.current.toggleVisibility()
+  const onBlogCreate = async (blog) => {
+    try {
+      await dispatch(createBlog(blog))
 
-        dispatch(setNotification('success', `You created a blog titled ${res.title}`, timeoutId))
-      })
-      .catch(() => {
-        dispatch(setNotification('error', 'You were not able to create a blog', timeoutId))
-      })
+      blogFormRef.current.toggleVisibility()
+      dispatch(setNotification('success', `You created a blog titled ${blog.title}`, timeoutId))
+    } catch (err) {
+      dispatch(setNotification('error', 'You were not able to create a blog', timeoutId))
+    }
   }
 
   const onBlogLike = (blog) => {
@@ -82,11 +78,11 @@ const App = () => {
     blogService
       .update(blog)
       .then((res) => {
-        const blogsArr = allBlogs.map((b) => {
-          return b.id === res.id ? res : b
-        })
+        // const blogsArr = allBlogs.map((b) => {
+        //   return b.id === res.id ? res : b
+        // })
 
-        setNewBlogs(blogsArr)
+        // setNewBlogs(blogsArr)
 
         dispatch(setNotification('success', `You liked a blog titled ${res.title}`, timeoutId))
       })
@@ -101,8 +97,8 @@ const App = () => {
     blogService
       .remove(id)
       .then(() => {
-        const arr = allBlogs.filter((b) => b.id !== id)
-        setNewBlogs(arr)
+        // const arr = allBlogs.filter((b) => b.id !== id)
+        // setNewBlogs(arr)
 
         dispatch(setNotification('success', 'You deleted a blog', timeoutId))
       })
@@ -158,7 +154,7 @@ const App = () => {
       </Togglable>
 
       <div id='blogs-div'>
-        {allBlogs.map((blog) => (
+        {allBlogs.sort(byLikes).map((blog) => (
           <Blog
             key={blog.id}
             blog={blog}
