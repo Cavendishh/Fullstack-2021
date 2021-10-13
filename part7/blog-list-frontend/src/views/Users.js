@@ -20,7 +20,9 @@ const Users = () => {
       <tbody>
         {allUsers.map((u) => (
           <tr key={u.id}>
-            <td>{u.username}</td>
+            <td>
+              <a href={`/users/${u.id}`}>{u.username}</a>
+            </td>
             <td>{u.blogs.length}</td>
           </tr>
         ))}
