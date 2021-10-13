@@ -43,6 +43,8 @@ const Blog = () => {
 
   const isBlogOwner = blog.user.id === auth.id
 
+  console.log(blog)
+
   return (
     <>
       <p>
@@ -54,8 +56,16 @@ const Blog = () => {
           like
         </button>
       </p>
-      <p>Made by {blog.author}</p>
-      {isBlogOwner && <button onClick={() => onBlogDelete(blog.id)}>Remove blog</button>}{' '}
+      <p>Written by {blog.author}</p>
+
+      <h3>Comments</h3>
+      <ul>
+        {blog.comments.map((c, i) => (
+          <li key={i}>{c}</li>
+        ))}
+      </ul>
+
+      {isBlogOwner && <button onClick={() => onBlogDelete(blog.id)}>Remove blog</button>}
     </>
   )
 }

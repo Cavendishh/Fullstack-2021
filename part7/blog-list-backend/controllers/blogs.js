@@ -10,6 +10,17 @@ blogsRouter.get('/', async (req, res) => {
   res.json(blogs)
 })
 
+blogsRouter.post('/:id/comments', async (req, res) => {
+  const { comment } = req.body
+
+  let blog = await Blog.findById(req.params.id)
+  blog.comments.push(comment)
+
+  const savedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true })
+
+  res.json(savedBlog)
+})
+
 blogsRouter.get('/:id', async (req, res) => {
   const blog = await Blog.findById(req.params.id)
 
