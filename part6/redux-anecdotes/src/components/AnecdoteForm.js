@@ -11,7 +11,6 @@ const AnecdoteForm = () => {
 
   const addAnecdote = async (e) => {
     e.preventDefault()
-    console.log('here', timeoutId)
 
     const anecdote = e.target.anecdote.value
     e.target.anecdote.value = ''
