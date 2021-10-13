@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom'
 import Home from '../views/Home'
 import Users from '../views/Users'
 import User from '../views/User'
+import Blog from '../views/Blog'
 import Logout from '../components/Logout'
 
 const Routes = () => {
@@ -19,6 +20,10 @@ const Routes = () => {
 
         <Route path='/users'>
           <Users />
+        </Route>
+
+        <Route path='/blogs/:id'>
+          <Blog />
         </Route>
 
         <Route path='/'>

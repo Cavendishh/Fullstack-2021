@@ -48,7 +48,8 @@ export const likeBlog = (blogObj) => {
   return async (dispatch) => {
     blogObj = { ...blogObj, likes: blogObj.likes + 1 }
 
-    const blog = await blogService.update(blogObj)
+    let blog = await blogService.update(blogObj)
+    blog = { ...blog, user: { id: blog.user } } // Used to 'populate' the object to right format
 
     dispatch({ type: 'UPDATE_BLOG', payload: blog })
   }
