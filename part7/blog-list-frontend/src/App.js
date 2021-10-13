@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { setNotification } from './reducers/notificationReducer'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -7,11 +10,13 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
+  const dispatch = useDispatch()
+  const timeoutId = useSelector((state) => state.notification.timeoutId)
+
   const [allBlogs, setAllBlogs] = useState([])
   const [loggedUser, setLoggedUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [notification, setNotification] = useState(null)
 
   const blogFormRef = useRef()
 
@@ -33,14 +38,6 @@ const App = () => {
     }
   }, [])
 
-  const setNotificationMsg = (type, message) => {
-    setNotification({ type, message })
-
-    setTimeout(() => {
-      setNotification({ type: '', message: '' })
-    }, 4000)
-  }
-
   const onLogin = async (e) => {
     e.preventDefault()
 
@@ -53,16 +50,16 @@ const App = () => {
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
 
       setLoggedUser(user)
-      setNotificationMsg('success', 'Succesfully logged in')
+      dispatch(setNotification('success', 'Succesfully logged in', timeoutId))
     } catch (err) {
-      setNotificationMsg('error', 'Username or password is invalid')
+      dispatch(setNotification('error', 'Username or password is invalid', timeoutId))
     }
   }
 
   const onLogout = () => {
     window.localStorage.removeItem('loggedUser')
     setLoggedUser(null)
-    setNotificationMsg('success', 'Succesfully logged out')
+    dispatch(setNotification('success', 'Succesfully logged out', timeoutId))
   }
 
   const onBlogCreate = (blog) => {
@@ -72,9 +69,11 @@ const App = () => {
         setNewBlogs(allBlogs.concat(res))
         blogFormRef.current.toggleVisibility()
 
-        setNotificationMsg('success', `You created a blog titled ${res.title}`)
+        dispatch(setNotification('success', `You created a blog titled ${res.title}`, timeoutId))
       })
-      .catch(() => setNotificationMsg('error', 'You were not able to create a blog'))
+      .catch(() => {
+        dispatch(setNotification('error', 'You were not able to create a blog', timeoutId))
+      })
   }
 
   const onBlogLike = (blog) => {
@@ -89,9 +88,11 @@ const App = () => {
 
         setNewBlogs(blogsArr)
 
-        setNotificationMsg('success', `You liked a blog titled ${res.title}`)
+        dispatch(setNotification('success', `You liked a blog titled ${res.title}`, timeoutId))
       })
-      .catch(() => setNotificationMsg('error', 'You were not able to like a blog'))
+      .catch(() => {
+        dispatch(setNotification('error', 'You were not able to like a blog', timeoutId))
+      })
   }
 
   const onBlogDelete = (id) => {
@@ -103,9 +104,11 @@ const App = () => {
         const arr = allBlogs.filter((b) => b.id !== id)
         setNewBlogs(arr)
 
-        setNotificationMsg('success', 'You deleted a blog')
+        dispatch(setNotification('success', 'You deleted a blog', timeoutId))
       })
-      .catch(() => setNotificationMsg('error', 'You were not able to delete a blog'))
+      .catch(() => {
+        dispatch(setNotification('error', 'You were not able to delete a blog', timeoutId))
+      })
   }
 
   if (loggedUser === null)
@@ -113,7 +116,7 @@ const App = () => {
       <>
         <h2>Login page</h2>
 
-        <Notification notification={notification} />
+        <Notification />
 
         <form onSubmit={onLogin} id='login-form'>
           <p>Username</p>
@@ -148,7 +151,7 @@ const App = () => {
         <button onClick={onLogout}>Log out</button>
       </p>
 
-      <Notification notification={notification} />
+      <Notification />
 
       <Togglable buttonLabel='Create a blog' ref={blogFormRef}>
         <BlogForm onBlogCreate={onBlogCreate} />
