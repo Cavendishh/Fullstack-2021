@@ -4,8 +4,6 @@ import { useSelector } from 'react-redux'
 const Users = () => {
   const allUsers = useSelector((state) => state.users)
 
-  console.log(allUsers)
-
   if (!allUsers) return null
 
   return (
