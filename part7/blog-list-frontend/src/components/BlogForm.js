@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { setNotification } from '../reducers/notificationReducer'
+import { createBlog } from '../reducers/blogReducer'
 
 const emptyBlogObj = {
   title: '',
@@ -7,18 +10,30 @@ const emptyBlogObj = {
   url: '',
 }
 
-const BlogForm = ({ onBlogCreate }) => {
+const BlogForm = ({ blogFormRef }) => {
+  const dispatch = useDispatch()
+  const timeoutId = useSelector((state) => state.notification.timeoutId)
+
   const [newBlog, setNewBlog] = useState(emptyBlogObj)
 
-  const onChangeNewBlog = ({ target }) => {
-    setNewBlog({ ...newBlog, [target.name]: target.value })
-  }
+  const onChangeNewBlog = ({ target }) => setNewBlog({ ...newBlog, [target.name]: target.value })
 
   const onSubmit = (e) => {
     e.preventDefault()
 
     onBlogCreate(newBlog)
     setNewBlog(emptyBlogObj)
+  }
+
+  const onBlogCreate = async (blog) => {
+    try {
+      await dispatch(createBlog(blog))
+
+      blogFormRef.current.toggleVisibility()
+      dispatch(setNotification('success', `You created a blog titled ${blog.title}`, timeoutId))
+    } catch (err) {
+      dispatch(setNotification('error', 'You were not able to create a blog', timeoutId))
+    }
   }
 
   return (
@@ -60,10 +75,6 @@ const BlogForm = ({ onBlogCreate }) => {
       </button>
     </form>
   )
-}
-
-BlogForm.propTypes = {
-  onBlogCreate: PropTypes.func.isRequired,
 }
 
 export default BlogForm
