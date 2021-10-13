@@ -1,48 +1,31 @@
-import React, { useEffect, useRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { BrowserRouter as Router } from 'react-router-dom'
 
+import Routes from './routes/Routes'
 import { checkAuth } from './reducers/authReducer'
 import { initializeBlogs } from './reducers/blogReducer'
-import Blogs from './components/Blogs'
+import { initializeUsers } from './reducers/userReducer'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
-import Logout from './components/Logout'
 import LoginForm from './components/LoginForm'
-import BlogForm from './components/BlogForm'
 
 const App = () => {
   const dispatch = useDispatch()
-  const auth = useSelector((state) => state.auth)
-
-  const blogFormRef = useRef()
+  const userAuth = useSelector((state) => state.auth)
 
   useEffect(() => {
     dispatch(checkAuth())
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   }, [])
 
-  if (auth === null)
-    return (
-      <>
-        <Notification />
-
-        <LoginForm />
-      </>
-    )
-
   return (
-    <>
-      <h2>Blogs</h2>
-      <Logout />
-
+    <Router>
       <Notification />
 
-      <Togglable buttonLabel='Create a blog' ref={blogFormRef}>
-        <BlogForm blogFormRef={blogFormRef} />
-      </Togglable>
-
-      <Blogs />
-    </>
+      {userAuth ? <Routes /> : <LoginForm />}
+    </Router>
   )
 }
 
