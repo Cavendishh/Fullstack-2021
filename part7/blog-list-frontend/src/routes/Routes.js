@@ -5,13 +5,14 @@ import Home from '../views/Home'
 import Users from '../views/Users'
 import User from '../views/User'
 import Blog from '../views/Blog'
-import Logout from '../components/Logout'
+
+import Navigation from '../components/Navigation'
 
 const Routes = () => {
   return (
     <>
+      <Navigation />
       <h2>Blogs</h2>
-      <Logout />
 
       <Switch>
         <Route path='/users/:id'>

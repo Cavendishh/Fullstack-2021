@@ -20,10 +20,10 @@ const Logout = () => {
   }
 
   return (
-    <p>
+    <>
       You are logged in as user <b>{auth.username} </b>
       <button onClick={onLogout}>Log out</button>
-    </p>
+    </>
   )
 }
 
