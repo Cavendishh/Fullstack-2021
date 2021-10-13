@@ -55,6 +55,15 @@ export const likeBlog = (blogObj) => {
   }
 }
 
+export const commentBlog = (blogObj, comment) => {
+  return async (dispatch) => {
+    let blog = await blogService.comment(blogObj, comment)
+    blog = { ...blog, user: { id: blog.user } } // Used to 'populate' the object to right format
+
+    dispatch({ type: 'UPDATE_BLOG', payload: blog })
+  }
+}
+
 export const removeBlog = (id) => {
   return async (dispatch) => {
     await blogService.remove(id)

@@ -21,6 +21,11 @@ const create = async (blog) => {
   return res.data
 }
 
+const comment = async (blog, comment) => {
+  const res = await axios.post(`${baseUrl}/${blog.id}/comments`, { comment })
+  return res.data
+}
+
 const update = async (blog) => {
   const url = `${baseUrl}/${blog.id}`
 
@@ -39,6 +44,7 @@ const exportObj = {
   setToken,
   getAll,
   create,
+  comment,
   update,
   remove,
 }
