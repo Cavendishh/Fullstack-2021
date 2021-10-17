@@ -1,8 +1,14 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Typography, Button, Box } from '@mui/material'
+import { styled } from '@mui/material/styles'
 
 import { logout } from '../reducers/authReducer'
 import { setNotification } from '../reducers/notificationReducer'
+
+const LogoutButton = styled(Button)(() => ({
+  marginLeft: 16,
+}))
 
 const Logout = () => {
   const dispatch = useDispatch()
@@ -20,10 +26,15 @@ const Logout = () => {
   }
 
   return (
-    <>
-      You are logged in as user <b>{auth.username} </b>
-      <button onClick={onLogout}>Log out</button>
-    </>
+    <Box display='flex' alignItems='center'>
+      <Typography color='black'>
+        You are logged in as user <b>{auth.username} </b>
+      </Typography>
+
+      <LogoutButton variant='outlined' color='error' size='small' onClick={onLogout}>
+        Log out
+      </LogoutButton>
+    </Box>
   )
 }
 

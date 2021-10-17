@@ -1,18 +1,19 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
+import Navigation from '../components/Navigation'
+import Notification from '../components/Notification'
 import Home from '../views/Home'
 import Users from '../views/Users'
 import User from '../views/User'
 import Blog from '../views/Blog'
 
-import Navigation from '../components/Navigation'
-
 const Routes = () => {
   return (
     <>
       <Navigation />
-      <h2>Blogs</h2>
+
+      <Notification />
 
       <Switch>
         <Route path='/users/:id'>

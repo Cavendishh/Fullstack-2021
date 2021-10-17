@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Box, Button, TextField } from '@mui/material'
+import { styled } from '@mui/material/styles'
 
 import { setNotification } from '../reducers/notificationReducer'
 import { createBlog } from '../reducers/blogReducer'
@@ -9,6 +11,11 @@ const emptyBlogObj = {
   author: '',
   url: '',
 }
+
+const StyledTextField = styled(TextField)(() => ({
+  marginTop: 16,
+  width: 250,
+}))
 
 const BlogForm = ({ blogFormRef }) => {
   const dispatch = useDispatch()
@@ -36,11 +43,16 @@ const BlogForm = ({ blogFormRef }) => {
     }
   }
 
+  const onCancel = (e) => {
+    e.preventDefault()
+    blogFormRef.current.toggleVisibility()
+  }
+
   return (
     <form onSubmit={onSubmit} id='new-blog-form'>
       <div>
-        Title
-        <input
+        <StyledTextField
+          label='Title'
           id='title-input'
           type='text'
           value={newBlog.title}
@@ -50,8 +62,8 @@ const BlogForm = ({ blogFormRef }) => {
       </div>
 
       <div>
-        Author
-        <input
+        <StyledTextField
+          label='Author'
           id='author-input'
           type='text'
           value={newBlog.author}
@@ -61,8 +73,8 @@ const BlogForm = ({ blogFormRef }) => {
       </div>
 
       <div>
-        Url
-        <input
+        <StyledTextField
+          label='Url'
           id='url-input'
           type='text'
           value={newBlog.url}
@@ -70,9 +82,16 @@ const BlogForm = ({ blogFormRef }) => {
           onChange={(e) => onChangeNewBlog(e)}
         />
       </div>
-      <button type='submit' id='create-blog-btn'>
-        Create
-      </button>
+
+      <Box display='flex' mt={2} width={'250px'} justifyContent='space-around'>
+        <Button variant='contained' color='error' onClick={onCancel}>
+          Cancel
+        </Button>
+
+        <Button variant='contained' type='submit' id='create-blog-btn'>
+          Create
+        </Button>
+      </Box>
     </form>
   )
 }

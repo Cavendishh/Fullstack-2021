@@ -1,27 +1,44 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Box, AppBar, Toolbar } from '@mui/material'
+import { styled } from '@mui/material/styles'
 
 import Logout from './Logout'
 
-const linkStyle = {
+const Nav = styled(AppBar)(() => ({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  backgroundColor: 'white',
+  marginTop: '-8px',
+}))
+
+const Item = styled(Box)(() => ({
   margin: 8,
-}
+  textTransform: 'none',
+}))
 
 const Navigation = () => {
   return (
-    <div style={{ display: 'flex' }}>
-      <div style={linkStyle}>
-        <Link to='/blogs'>Home</Link>
-      </div>
+    <Box sx={{ flexGrow: 1 }}>
+      <Nav position='static'>
+        <Toolbar display='flex'>
+          <Item>
+            <Link to='/blogs'>Home</Link>
+          </Item>
 
-      <div style={linkStyle}>
-        <Link to='/users'>Users</Link>
-      </div>
+          <Item>
+            <Link to='/users'>Users</Link>
+          </Item>
+        </Toolbar>
 
-      <div style={linkStyle}>
-        <Logout />
-      </div>
-    </div>
+        <Toolbar>
+          <Item>
+            <Logout />
+          </Item>
+        </Toolbar>
+      </Nav>
+    </Box>
   )
 }
 

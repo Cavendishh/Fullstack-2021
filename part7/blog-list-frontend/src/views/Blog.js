@@ -1,9 +1,15 @@
 import React, { useState } from 'react'
 import { useRouteMatch, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { Box, Button, TextField, List, ListItem, Typography } from '@mui/material'
+import { styled } from '@mui/material/styles'
 
 import { setNotification } from '../reducers/notificationReducer'
 import { likeBlog, commentBlog, removeBlog } from '../reducers/blogReducer'
+
+const StyledTypography = styled(Typography)(() => ({
+  marginTop: 24,
+}))
 
 const Blog = () => {
   const match = useRouteMatch('/blogs/:id')
@@ -57,31 +63,48 @@ const Blog = () => {
 
   return (
     <>
-      <p>
-        url: <a href={blog.url}>{blog.url}</a>
-      </p>
-      <p>
-        likes: {blog.likes}&nbsp;{' '}
-        <button onClick={() => onBlogLike(blog)} id='like-btn'>
+      <StyledTypography>
+        url:{' '}
+        <a href={blog.url}>
+          <b>{blog.url}</b>
+        </a>
+      </StyledTypography>
+
+      <StyledTypography>
+        likes: <b>{blog.likes}</b>&nbsp;
+        <Button variant='contained' onClick={() => onBlogLike(blog)} id='like-btn'>
           like
-        </button>
-      </p>
-      <p>Written by {blog.author}</p>
+        </Button>
+      </StyledTypography>
 
-      <h3>Comments</h3>
-      <input
-        type='text'
-        value={newComment}
-        onChange={({ target }) => setNewComment(target.value)}
-      />
-      <button onClick={addComment}>add</button>
-      <ul>
+      <StyledTypography>
+        Written by <b>{blog.author}</b>
+      </StyledTypography>
+
+      <StyledTypography variant='h5'>Comment section</StyledTypography>
+
+      <Box display='flex'>
+        <TextField
+          label='Write a comment'
+          value={newComment}
+          onChange={({ target }) => setNewComment(target.value)}
+        />
+        <Button variant='contained' onClick={addComment}>
+          add
+        </Button>
+      </Box>
+
+      <List>
         {blog.comments.map((c, i) => (
-          <li key={i}>{c}</li>
+          <ListItem key={i}>- {c}</ListItem>
         ))}
-      </ul>
+      </List>
 
-      {isBlogOwner && <button onClick={() => onBlogDelete(blog.id)}>Remove blog</button>}
+      {isBlogOwner && (
+        <Button color='error' variant='contained' onClick={() => onBlogDelete(blog.id)}>
+          Remove blog
+        </Button>
+      )}
     </>
   )
 }

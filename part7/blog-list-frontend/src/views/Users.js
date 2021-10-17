@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material'
 
 const Users = () => {
   const allUsers = useSelector((state) => state.users)
@@ -7,25 +8,29 @@ const Users = () => {
   if (!allUsers) return null
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Blogs created</th>
-        </tr>
-      </thead>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>
+            <b>User</b>
+          </TableCell>
+          <TableCell>
+            <b>Blogs created</b>
+          </TableCell>
+        </TableRow>
+      </TableHead>
 
-      <tbody>
+      <TableBody>
         {allUsers.map((u) => (
-          <tr key={u.id}>
-            <td>
+          <TableRow key={u.id}>
+            <TableCell>
               <a href={`/users/${u.id}`}>{u.username}</a>
-            </td>
-            <td>{u.blogs.length}</td>
-          </tr>
+            </TableCell>
+            <TableCell>{u.blogs.length}</TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   )
 }
 

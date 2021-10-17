@@ -1,6 +1,13 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Grid, Typography, Button, TextField, InputAdornment, Stack } from '@mui/material'
+import {
+  AccountCircle as AccountCircle,
+  LockOpen as LockOpenIcon,
+  Login as LoginIcon,
+} from '@mui/icons-material'
 
+import Notification from '../components/Notification'
 import { login } from '../reducers/authReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
@@ -25,30 +32,56 @@ const LoginForm = () => {
 
   return (
     <>
-      <h2>Login page</h2>
+      <Notification />
+      <Grid container direction='column' alignItems='center'>
+        <Typography variant='h4' component='h2' mb={3}>
+          Login page
+        </Typography>
 
-      <form onSubmit={onLogin} id='login-form'>
-        <p>Username</p>
-        <input
-          type='text'
-          value={username}
-          name='username'
-          id='username-input'
-          onChange={({ target }) => setUsername(target.value)}
-        />
+        <form onSubmit={onLogin} id='login-form'>
+          <Stack spacing={3} sx={{ width: 400 }}>
+            <TextField
+              id='username-input'
+              label='Username'
+              value={username}
+              onChange={({ target }) => setUsername(target.value)}
+              required
+              autoComplete='off'
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position='start'>
+                    <AccountCircle />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              id='password-input'
+              label='Password'
+              onChange={({ target }) => setPassword(target.value)}
+              required
+              autoComplete='off'
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position='start'>
+                    <LockOpenIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-        <p>Password</p>
-        <input
-          type='text'
-          value={password}
-          name='password'
-          id='password-input'
-          onChange={({ target }) => setPassword(target.value)}
-        />
-        <button type='submit' id='login-button'>
-          Log in
-        </button>
-      </form>
+            <Button
+              type='submit'
+              variant='contained'
+              id='login-button'
+              startIcon={<LoginIcon />}
+              sx={{ width: '100%' }}
+            >
+              Log in
+            </Button>
+          </Stack>
+        </form>
+      </Grid>
     </>
   )
 }
