@@ -6,7 +6,7 @@ const errorHandler = (err, req, res, next) => {
   console.error(err.message)
 
   if (err.name === 'SequelizeValidationError') {
-    return res.status(400).send({ error: `${err.name}: ${err.message}` })
+    return res.status(400).send({ error: err.message })
   }
 
   next(err)
