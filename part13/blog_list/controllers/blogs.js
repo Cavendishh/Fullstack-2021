@@ -23,7 +23,13 @@ const tokenExtractor = (req, res, next) => {
 }
 
 const blogFetcher = async (req, res, next) => {
-  req.blog = await Blog.findByPk(req.params.id)
+  req.blog = await Blog.findByPk(req.params.id, {
+    attributes: { exclude: ['userId'] },
+    include: {
+      model: User,
+      attributes: ['name'],
+    },
+  })
   next()
 }
 
@@ -33,7 +39,13 @@ const userFetcher = async (req, res, next) => {
 }
 
 router.get('/', async (req, res) => {
-  const blogs = await Blog.findAll()
+  const blogs = await Blog.findAll({
+    attributes: { exclude: ['userId'] },
+    include: {
+      model: User,
+      attributes: ['name'],
+    },
+  })
   console.log('Blogs >> ', JSON.stringify(blogs, null, 2))
   res.json(blogs)
 })
