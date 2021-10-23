@@ -7,12 +7,12 @@ const { SECRET } = require('../utils/config')
 
 const tokenExtractor = (req, res, next) => {
   const auth = req.get('authorization')
+
   if (!auth?.toLowerCase()?.startsWith('bearer ')) {
     return res.status(401).json({ error: 'Bearer token missing' })
   }
 
   try {
-    console.log('Method >> ', auth.substring(7))
     req.decodedToken = jwt.verify(auth.substring(7), SECRET)
   } catch (err) {
     console.log(err)
@@ -60,8 +60,10 @@ router.put('/:id', blogFetcher, async (req, res) => {
   }
 })
 
-router.delete('/:id', blogFetcher, async (req, res) => {
-  if (req.blog) await req.blog.destroy()
+router.delete('/:id', tokenExtractor, blogFetcher, userFetcher, async (req, res) => {
+  if (req.blog?.userId !== req.user.id) return res.status(401).end()
+
+  await req.blog.destroy()
   return res.status(204).end()
 })
 
