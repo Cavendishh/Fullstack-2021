@@ -1,5 +1,7 @@
-const { sequelize } = require('../utils/db')
+const Sequelize = require('sequelize')
 const { Model, DataTypes } = require('sequelize')
+
+const { sequelize } = require('../utils/db')
 
 class Blog extends Model {}
 
@@ -23,6 +25,16 @@ Blog.init(
     },
     likes: {
       type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    created_at: {
+      type: Sequelize.DATE(3),
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3)'),
+      allowNull: false,
+    },
+    updated_at: {
+      type: Sequelize.DATE(3),
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3)'),
       allowNull: false,
     },
   },
