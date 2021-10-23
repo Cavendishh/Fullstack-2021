@@ -40,6 +40,12 @@ const errorHandler = (err, req, res, next) => {
   console.error(err.message)
 
   if (err.name === 'SequelizeValidationError') {
+    if (err.message.includes(' on year failed')) {
+      return res
+        .status(400)
+        .send({ error: `Year must be between 1991 and ${new Date().getFullYear()}` })
+    }
+
     return res.status(400).send({ error: err.message })
   }
 

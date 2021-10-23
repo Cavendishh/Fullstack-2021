@@ -27,6 +27,14 @@ Blog.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    year: {
+      type: DataTypes.INTEGER,
+      validate: {
+        min: 1991,
+        max: new Date().getFullYear(),
+      },
+      allowNull: false,
+    },
     created_at: {
       type: Sequelize.DATE(3),
       defaultValue: Sequelize.literal('CURRENT_TIMESTAMP(3)'),
