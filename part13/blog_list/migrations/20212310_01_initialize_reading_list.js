@@ -10,11 +10,11 @@ module.exports = {
         autoIncrement: true,
       },
       blog_id: {
-        type: DataTypes.TEXT,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       user_id: {
-        type: DataTypes.TEXT,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       is_read: {
