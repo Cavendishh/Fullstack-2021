@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { Op } = require('sequelize')
+const { Op, sequelize } = require('sequelize')
 
 const { Blog, User } = require('../models')
 const { tokenExtractor, blogFetcher, userFetcher } = require('../utils/middleware')
@@ -31,6 +31,7 @@ router.get('/', async (req, res) => {
       attributes: ['name'],
     },
     where,
+    order: [['likes', 'DESC']],
   })
 
   res.json(blogs)
