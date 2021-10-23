@@ -28,6 +28,18 @@ router.post('/', async (req, res) => {
   }
 })
 
+router.put('/:id', async (req, res) => {
+  const blog = await Blog.findByPk(req.params.id)
+  if (blog) {
+    // console.log('Body', req.body)
+    // console.log('Blog', blog)
+    blog.likes = req.body.likes
+    // console.log('Blog', blog)
+    await blog.save()
+    res.json(blog)
+  }
+})
+
 router.delete('/:id', async (req, res) => {
   const blog = await Blog.findByPk(req.params.id)
   if (blog) await blog.destroy()
