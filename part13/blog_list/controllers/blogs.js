@@ -1,42 +1,7 @@
 const router = require('express').Router()
-const jwt = require('jsonwebtoken')
 
-const { Blog } = require('../models')
-const { User } = require('../models')
-const { SECRET } = require('../utils/config')
-
-const tokenExtractor = (req, res, next) => {
-  const auth = req.get('authorization')
-
-  if (!auth?.toLowerCase()?.startsWith('bearer ')) {
-    return res.status(401).json({ error: 'Bearer token missing' })
-  }
-
-  try {
-    req.decodedToken = jwt.verify(auth.substring(7), SECRET)
-  } catch (err) {
-    console.log(err)
-    return res.status(401).json({ error: 'Token invalid' })
-  }
-
-  next()
-}
-
-const blogFetcher = async (req, res, next) => {
-  req.blog = await Blog.findByPk(req.params.id, {
-    attributes: { exclude: ['userId'] },
-    include: {
-      model: User,
-      attributes: ['name'],
-    },
-  })
-  next()
-}
-
-const userFetcher = async (req, res, next) => {
-  req.user = await User.findByPk(req.decodedToken.id)
-  next()
-}
+const { Blog, User } = require('../models')
+const { tokenExtractor, blogFetcher, userFetcher } = require('../utils/middleware')
 
 router.get('/', async (req, res) => {
   const blogs = await Blog.findAll({
@@ -46,17 +11,15 @@ router.get('/', async (req, res) => {
       attributes: ['name'],
     },
   })
-  console.log('Blogs >> ', JSON.stringify(blogs, null, 2))
+  // console.log('Blogs >> ', JSON.stringify(blogs, null, 2))
   res.json(blogs)
 })
 
 router.get('/:id', blogFetcher, async (req, res) => {
-  if (req.blog) {
-    console.log('Blog >> ', req.blog.toJSON())
-    return res.json(req.blog)
-  }
+  if (!req.blog) return res.status(404).end()
 
-  res.status(404).end()
+  // console.log('Blog >> ', req.blog.toJSON())
+  return res.json(req.blog)
 })
 
 router.post('/', tokenExtractor, userFetcher, async (req, res) => {
@@ -65,14 +28,16 @@ router.post('/', tokenExtractor, userFetcher, async (req, res) => {
 })
 
 router.put('/:id', blogFetcher, async (req, res) => {
-  if (req.blog) {
-    req.blog.likes = req.body.likes
-    await req.blog.save()
-    res.json(req.blog)
-  }
+  if (!req.blog) return res.status(404).end()
+
+  req.blog.likes = req.body.likes
+  await req.blog.save()
+  res.json(req.blog)
 })
 
 router.delete('/:id', tokenExtractor, blogFetcher, userFetcher, async (req, res) => {
+  console.log(req.blog.userId)
+  console.log(req.user.id)
   if (req.blog?.userId !== req.user.id) return res.status(401).end()
 
   await req.blog.destroy()
