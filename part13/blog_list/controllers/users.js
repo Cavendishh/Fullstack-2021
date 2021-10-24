@@ -25,13 +25,11 @@ router.get('/:id', async (req, res) => {
         through: {
           attributes: [],
         },
-        // include: {
-        //   model: ReadingLists,
-        // },
-      },
-      {
-        model: ReadingLists,
-        attributes: { exclude: ['userId'] },
+        include: {
+          model: ReadingLists,
+          as: 'read_status',
+          attributes: { exclude: ['userId', 'blogId'] },
+        },
       },
     ],
   })
