@@ -22,11 +22,11 @@ ReadingLists.init(
       allowNull: false,
       references: { model: 'users', key: 'id' },
     },
-    // isRead: {
-    //   type: DataTypes.BOOLEAN,
-    //   allowNull: false,
-    //   defaultValue: false,
-    // },
+    isRead: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   },
   {
     sequelize,

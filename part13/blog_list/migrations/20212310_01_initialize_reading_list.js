@@ -18,11 +18,11 @@ module.exports = {
         allowNull: false,
         references: { model: 'users', key: 'id' },
       },
-      // is_read: {
-      //   type: DataTypes.BOOLEAN,
-      //   allowNull: false,
-      //   defaultValue: false,
-      // },
+      is_read: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     })
   },
   down: async (queryInterface) => {
