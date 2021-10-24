@@ -39,6 +39,12 @@ const unknownEndpoint = (req, res) => {
 const errorHandler = (err, req, res, next) => {
   console.error(err.message)
 
+  if (err.name === 'SequelizeUniqueConstraintError') {
+    return res
+      .status(400)
+      .send({ error: `${err.message}. Can happen when something is not unique like username` })
+  }
+
   if (err.name === 'SequelizeValidationError') {
     if (err.message.includes(' on year failed')) {
       return res
