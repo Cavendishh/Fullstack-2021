@@ -1,9 +1,7 @@
 const router = require('express').Router()
 const { Op } = require('sequelize')
 
-const { User } = require('../models')
-const { Blog } = require('../models')
-const { ReadingLists } = require('../models')
+const { User, Blog, ReadingLists } = require('../models')
 
 router.get('/', async (req, res) => {
   const users = await User.findAll({ include: { model: Blog } })

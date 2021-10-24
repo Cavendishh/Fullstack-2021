@@ -2,9 +2,9 @@ const router = require('express').Router()
 const { Op } = require('sequelize')
 
 const Session = require('../models/session')
-const { tokenExtractor, userFetcher } = require('../utils/middleware')
+const { tokenExtractor } = require('../utils/middleware')
 
-router.delete('/', tokenExtractor, userFetcher, async (req, res) => {
+router.delete('/', tokenExtractor, async (req, res) => {
   await Session.destroy({
     where: {
       user_id: {

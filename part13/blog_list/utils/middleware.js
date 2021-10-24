@@ -36,15 +36,7 @@ const blogFetcher = async (req, res, next) => {
   next()
 }
 
-const userFetcher = async (req, res, next) => {
-  req.user = await User.findByPk(req.decodedToken.id)
-
-  next()
-}
-
-const unknownEndpoint = (req, res) => {
-  res.status(404).send({ error: 'Unknown endpoint' })
-}
+const unknownEndpoint = (req, res) => res.status(404).send({ error: 'Unknown endpoint' })
 
 const errorHandler = (err, req, res, next) => {
   console.error(err.message)
@@ -71,7 +63,6 @@ const errorHandler = (err, req, res, next) => {
 module.exports = {
   tokenExtractor,
   blogFetcher,
-  userFetcher,
   unknownEndpoint,
   errorHandler,
 }
