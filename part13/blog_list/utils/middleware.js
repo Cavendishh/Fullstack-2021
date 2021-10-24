@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken')
 
-const { Blog, User } = require('../models')
+const { Blog, User, Session } = require('../models')
 const { SECRET } = require('./config')
 
-const tokenExtractor = (req, res, next) => {
+const tokenExtractor = async (req, res, next) => {
   const auth = req.get('authorization')
 
   if (!auth?.toLowerCase()?.startsWith('bearer ')) {
@@ -15,6 +15,16 @@ const tokenExtractor = (req, res, next) => {
   } catch (err) {
     console.log(err)
     return res.status(401).json({ error: 'Token invalid' })
+  }
+
+  const userId = req.decodedToken.id
+
+  const session = await Session.findOne({ where: { user_id: userId } })
+  if (!session) return res.status(401).json({ error: 'User is not logged in' })
+
+  req.user = await User.findByPk(userId)
+  if (req.user.disabled) {
+    return res.status(401).json({ error: 'User has been disabled by an admin' })
   }
 
   next()
