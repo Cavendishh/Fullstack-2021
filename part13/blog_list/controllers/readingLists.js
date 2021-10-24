@@ -14,7 +14,7 @@ router.put('/:id', tokenExtractor, userFetcher, async (req, res) => {
   if (readingList.userId !== req.user.id) return res.status(401).end()
   if (!readingList) return res.status(404).end()
 
-  readingList.isRead = req.body.read
+  readingList.isRead = req.body.isRead
   await readingList.save()
 
   res.json(readingList)
