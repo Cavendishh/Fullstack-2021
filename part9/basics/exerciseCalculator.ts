@@ -1,3 +1,4 @@
+export {} // solves "cannot redeclare block scoped variable"
 interface Result {
   periodLength: number
   trainingDays: number
@@ -38,7 +39,38 @@ const calculateExercises = (dailyExercises: number[], target: number): Result =>
   }
 }
 
-const exercises = [3, 0, 2, 4.5, 0, 3, 1]
-const target = 2
+interface ParsedExerciseArgs {
+  target: number
+  dailyHours: number[]
+}
 
-console.log(calculateExercises(exercises, target))
+const parseArgs = (args: string[]): ParsedExerciseArgs => {
+  if (args.length < 4) throw new Error('Not enough arguments')
+
+  const target = Number(args[2])
+  args = args.slice(3)
+  const dailyHours = args.map((h) => Number(h))
+  const isNanDailyArg = dailyHours.some((h) => isNaN(h))
+
+  if (isNaN(target) || isNanDailyArg) throw new Error('Please provide all arguments as numbers')
+
+  const hasInvalidDailyHours = dailyHours.some((hours) => hours > 24)
+
+  if (target > 24 || hasInvalidDailyHours) {
+    throw new Error('Did you know that there cant be more than 24 hours in a day only? ')
+  }
+
+  return { target, dailyHours }
+}
+
+try {
+  const { target, dailyHours } = parseArgs(process.argv)
+  console.log(calculateExercises(dailyHours, target))
+} catch (err: unknown) {
+  let errorMessage = 'A wild error happened.'
+
+  if (err instanceof Error) {
+    errorMessage = `${errorMessage} Error: ${err.message}`
+  }
+  console.log(errorMessage)
+}
