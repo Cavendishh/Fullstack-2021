@@ -1,6 +1,4 @@
-const calculateBmi = (height: number, weight: number): string => {
-  console.log(height)
-  console.log(weight)
+export const calculateBmi = (height: number, weight: number): string => {
   height = height / 100 // Converts to meters
   const bmi = weight / (height * height)
 
@@ -34,13 +32,7 @@ const parseArgs = (args: Array<string>): BmiValues => {
   }
 }
 
-const height: number = Number(process.argv[2])
-const weight: number = Number(process.argv[3])
-
-try {
-  const { height, weight } = parseArgs(process.argv)
-  console.log(calculateBmi(height, weight))
-} catch (err: unknown) {
+const handleError = (err: unknown) => {
   let errorMessage = 'A wild error happened.'
 
   if (err instanceof Error) {
@@ -48,3 +40,14 @@ try {
   }
   console.log(errorMessage)
 }
+
+const getBmi = () => {
+  try {
+    const { height, weight } = parseArgs(process.argv)
+    calculateBmi(height, weight)
+  } catch (err: unknown) {
+    handleError(err)
+  }
+}
+
+if (process?.argv?.length > 2) console.log('Bmi: ', getBmi())
