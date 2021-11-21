@@ -9,7 +9,7 @@ interface Result {
   average: number;
 }
 
-const calculateExercises = (dailyExercises: number[], target: number): Result => {
+export const calculateExercises = (dailyExercises: number[], target: number): Result => {
   const periodLength = dailyExercises.length;
   const trainingDays = dailyExercises.filter((day) => day > 0).length;
   const average = dailyExercises.reduce((acc, curr) => acc + curr, 0) / periodLength;
@@ -63,14 +63,16 @@ const parseArgs = (args: string[]): ParsedExerciseArgs => {
   return { target, dailyHours };
 };
 
-try {
-  const { target, dailyHours } = parseArgs(process.argv);
-  console.log(calculateExercises(dailyHours, target));
-} catch (err: unknown) {
-  let errorMessage = 'A wild error happened.';
+if (process.argv.length > 2) {
+  try {
+    const { target, dailyHours } = parseArgs(process.argv);
+    console.log(calculateExercises(dailyHours, target));
+  } catch (err: unknown) {
+    let errorMessage = 'A wild error happened.';
 
-  if (err instanceof Error) {
-    errorMessage = `${errorMessage} Error: ${err.message}`;
+    if (err instanceof Error) {
+      errorMessage = `${errorMessage} Error: ${err.message}`;
+    }
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
 }
