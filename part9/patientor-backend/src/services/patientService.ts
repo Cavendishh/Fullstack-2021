@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import patients from '../../data/patients';
-import { PublicPatient, NewPatient, Patient } from '../types';
+import { PublicPatient, NewPatientEntry, PatientEntry } from '../types';
 
 const getPublicPatients = (): PublicPatient[] => {
   return patients.map(
@@ -15,7 +15,7 @@ const getPublicPatients = (): PublicPatient[] => {
   );
 };
 
-const addPatient = (patient: NewPatient): Patient => {
+const addPatient = (patient: NewPatientEntry): PatientEntry => {
   const newPatient = {
     id: uuidv4(),
     ...patient,
