@@ -6,6 +6,7 @@ import { useStateValue } from '../state';
 import { addNewPatientEntry } from '../state/reducer';
 import { PatientEntry } from '../types';
 import { apiBaseUrl } from '../constants';
+import EntryDetails from '../components/EntryDetails';
 
 const PatientDetail = () => {
   const [{ diagnosis, patientsDetails }, dispatch] = useStateValue();
@@ -30,9 +31,6 @@ const PatientDetail = () => {
   };
 
   if (patient) {
-    console.log('Patient >>', patient);
-    console.log('diagnosis >>', diagnosis);
-
     return (
       <div>
         <h3>
@@ -41,26 +39,29 @@ const PatientDetail = () => {
         <div>ssn: {patient.ssn}</div>
         <div>occupation: {patient.occupation}</div>
 
-        <h4>Patient entries:</h4>
-        {patient.entries.map((e) => (
-          <div key={e.id}>
-            <p>
-              {e.date} - {e.description}
-            </p>
+        {patient.entries.length ? (
+          <>
+            <h4>Patient entries:</h4>
+            {patient.entries.map((e) => (
+              <div className='ui raised container segment' key={e.id}>
+                <EntryDetails entry={e} />
 
-            <ul>
-              {e.diagnosisCodes?.map((d) => {
-                const diagnose = diagnosis[d];
-                if (diagnose)
-                  return (
-                    <li key={d}>
-                      {diagnose.code} - {diagnose.name}
-                    </li>
-                  );
-              })}
-            </ul>
-          </div>
-        ))}
+                {e.diagnosisCodes?.map((d) => {
+                  const diagnose = diagnosis[d];
+                  if (diagnose) {
+                    return (
+                      <li key={d}>
+                        {diagnose.code} - {diagnose.name}
+                      </li>
+                    );
+                  }
+                })}
+              </div>
+            ))}
+          </>
+        ) : (
+          <h4>No patient entries found</h4>
+        )}
       </div>
     );
   }
