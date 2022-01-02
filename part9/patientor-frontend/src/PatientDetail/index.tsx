@@ -30,6 +30,8 @@ const PatientDetail = () => {
   };
 
   if (patient) {
+    console.log('Patient >>', patient);
+
     return (
       <div>
         <h3>
@@ -37,6 +39,21 @@ const PatientDetail = () => {
         </h3>
         <div>ssn: {patient.ssn}</div>
         <div>occupation: {patient.occupation}</div>
+
+        <h4>Patient entries:</h4>
+        {patient.entries.map((e) => (
+          <div key={e.id}>
+            <p>
+              {e.date} - {e.description}
+            </p>
+
+            <ul>
+              {e.diagnosisCodes?.map((d) => (
+                <li key={d}>{d}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     );
   }
