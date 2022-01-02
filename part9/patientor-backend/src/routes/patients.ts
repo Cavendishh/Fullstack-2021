@@ -8,7 +8,6 @@ const router = express.Router();
 router.get('/', (_req, res) => {
   const patients = patientService.getPublicPatients();
 
-  console.log(patients);
   res.send(patients);
 });
 
@@ -17,7 +16,6 @@ router.get('/:id', (req, res) => {
 
   if (!patient) res.status(400).send('Patient not found');
 
-  console.log(patient);
   res.json(patient);
 });
 
@@ -39,7 +37,6 @@ router.post('/', (req, res) => {
 router.post('/:id/entries', (req, res) => {
   try {
     const newEntry = toNewEntry(req.body);
-    console.log('New entry >> ', newEntry);
     const addedEntry = patientService.addEntry(newEntry, req.params.id);
 
     res.json(addedEntry);

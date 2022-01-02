@@ -34,12 +34,9 @@ const addEntry = (entry: EntryWithoutId, id: string): Entry => {
     id: uuidv4(),
     ...entry,
   };
-
   const patientIndex = patients.findIndex((p) => p.id === id);
-
-  console.log('new', newEntry);
   patients[patientIndex].entries.push(newEntry);
-  // patients.entries.push(newEntry);
+
   return newEntry;
 };
 

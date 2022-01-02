@@ -27,7 +27,6 @@ const PatientListPage = () => {
 
   const submitNewPatient = async (values: PatientFormValues) => {
     try {
-      console.log('values', values);
       const { data: newPatient } = await axios.post<Patient>(`${apiBaseUrl}/patients`, values);
       dispatch(addNewPatient(newPatient));
       closeModal();
@@ -74,12 +73,7 @@ const PatientListPage = () => {
         </Table.Body>
       </Table>
 
-      <AddPatientModal
-        modalOpen={modalOpen}
-        onSubmit={submitNewPatient}
-        error={error}
-        onClose={closeModal}
-      />
+      <AddPatientModal modalOpen={modalOpen} onSubmit={submitNewPatient} error={error} onClose={closeModal} />
 
       <Button onClick={() => openModal()}>Add New Patient</Button>
     </div>

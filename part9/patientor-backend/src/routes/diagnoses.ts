@@ -5,8 +5,6 @@ const router = express.Router();
 
 router.get('/', (_req, res) => {
   const diagnoses = diagnoseService.getDiagnoses();
-
-  console.log(diagnoses);
   res.send(diagnoses);
 });
 
