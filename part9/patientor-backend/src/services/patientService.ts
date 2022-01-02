@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import patients from '../../data/patients';
-import { PublicPatient, NewPatientEntry, PatientEntry } from '../types';
+import { PublicPatient, NewPatientEntry, PatientEntry, Entry, EntryWithoutId } from '../types';
 
 const getPublicPatients = (): PublicPatient[] => {
   return patients.map(
@@ -29,8 +29,23 @@ const addPatient = (patient: NewPatientEntry): PatientEntry => {
   return newPatient;
 };
 
+const addEntry = (entry: EntryWithoutId, id: string): Entry => {
+  const newEntry = {
+    id: uuidv4(),
+    ...entry,
+  };
+
+  const patientIndex = patients.findIndex((p) => p.id === id);
+
+  console.log('new', newEntry);
+  patients[patientIndex].entries.push(newEntry);
+  // patients.entries.push(newEntry);
+  return newEntry;
+};
+
 export default {
   getPublicPatients,
   getPatient,
   addPatient,
+  addEntry,
 };
