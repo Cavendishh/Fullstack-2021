@@ -8,7 +8,7 @@ import { PatientEntry } from '../types';
 import { apiBaseUrl } from '../constants';
 
 const PatientDetail = () => {
-  const [{ patientsDetails }, dispatch] = useStateValue();
+  const [{ diagnosis, patientsDetails }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string }>();
 
   const patient = patientsDetails[id];
@@ -31,6 +31,7 @@ const PatientDetail = () => {
 
   if (patient) {
     console.log('Patient >>', patient);
+    console.log('diagnosis >>', diagnosis);
 
     return (
       <div>
@@ -48,9 +49,15 @@ const PatientDetail = () => {
             </p>
 
             <ul>
-              {e.diagnosisCodes?.map((d) => (
-                <li key={d}>{d}</li>
-              ))}
+              {e.diagnosisCodes?.map((d) => {
+                const diagnose = diagnosis[d];
+                if (diagnose)
+                  return (
+                    <li key={d}>
+                      {diagnose.code} - {diagnose.name}
+                    </li>
+                  );
+              })}
             </ul>
           </div>
         ))}
