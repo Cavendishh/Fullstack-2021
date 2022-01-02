@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 import { useStateValue } from '../state';
+import { addNewPatientEntry } from '../state/reducer';
 import { PatientEntry } from '../types';
 import { apiBaseUrl } from '../constants';
 
@@ -22,7 +23,7 @@ const PatientDetail = () => {
     try {
       const { data } = await axios.get<PatientEntry>(`${apiBaseUrl}/patients/${id}`);
 
-      dispatch({ type: 'ADD_PATIENT_ENTRY', payload: data });
+      dispatch(addNewPatientEntry(data));
     } catch (e) {
       console.error(e);
     }

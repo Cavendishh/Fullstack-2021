@@ -9,6 +9,7 @@ import { Patient } from '../types';
 import { apiBaseUrl } from '../constants';
 import HealthRatingBar from '../components/HealthRatingBar';
 import { useStateValue } from '../state';
+import { addNewPatient } from '../state/reducer';
 
 const PatientListPage = () => {
   const history = useHistory();
@@ -28,7 +29,7 @@ const PatientListPage = () => {
     try {
       console.log('values', values);
       const { data: newPatient } = await axios.post<Patient>(`${apiBaseUrl}/patients`, values);
-      dispatch({ type: 'ADD_PATIENT', payload: newPatient });
+      dispatch(addNewPatient(newPatient));
       closeModal();
     } catch (e) {
       console.error(e.response?.data || 'Unknown Error');
