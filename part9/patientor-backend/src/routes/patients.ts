@@ -12,6 +12,16 @@ router.get('/', (_req, res) => {
   res.send(patients);
 });
 
+// api endpoint to get patient data
+router.get('/:id', (req, res) => {
+  const patient = patientService.getPatient(req.params.id);
+
+  if (!patient) res.status(400).send('Patient not found');
+
+  console.log(patient);
+  res.json(patient);
+});
+
 router.post('/', (req, res) => {
   try {
     const newPatient = toNewPatientEntry(req.body);
