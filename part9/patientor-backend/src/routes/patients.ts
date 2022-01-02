@@ -12,7 +12,6 @@ router.get('/', (_req, res) => {
   res.send(patients);
 });
 
-// api endpoint to get patient data
 router.get('/:id', (req, res) => {
   const patient = patientService.getPatient(req.params.id);
 
