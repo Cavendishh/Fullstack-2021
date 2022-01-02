@@ -167,7 +167,6 @@ const parseSpecialist = (specialist: unknown): string => {
 };
 
 const parseHealthCheckRating = (rating: unknown): HealthCheckRating => {
-  console.log(rating === undefined);
   if (rating === undefined || !isNumber(rating) || !isHealthCheckRating(rating)) {
     throw new Error(`Incorrect or missing rating: ${rating}`);
   }
