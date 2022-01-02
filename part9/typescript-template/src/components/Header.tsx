@@ -1,10 +1,10 @@
 import React from 'react';
 
-interface IHeaderProps {
+interface Props {
   name: string;
 }
 
-const Header = ({ name }: IHeaderProps) => {
+const Header = ({ name }: Props) => {
   return <h1>{name}</h1>;
 };
 

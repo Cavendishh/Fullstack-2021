@@ -1,10 +1,10 @@
 import React from 'react';
 
-interface ITotalProps {
+interface Props {
   total: number;
 }
 
-const Total = ({ total }: ITotalProps) => {
+const Total = ({ total }: Props) => {
   return <p>Number of exercises {total}</p>;
 };
 
