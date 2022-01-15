@@ -1,6 +1,6 @@
 # Fullstack-2021
 
-[Deep Dive Into Modern Web Development](https://fullstackopen.com) course (14 credits) by Helsinki University
+[Deep Dive Into Modern Web Development](https://fullstackopen.com) course (14 credits) by [University of Helsinki](https://www.helsinki.fi/en)
 
 - [x]  Part 0 - Fundamentals of Web apps
 - [x]  Part 1 - Introduction to React
