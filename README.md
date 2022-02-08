@@ -12,7 +12,7 @@
 - [x]  Part 7 - React router, custom hooks, styling app with CSS and webpack
 - [ ]  Part 8 - GraphQL
 - [x]  Part 9 - TypeScript
-- [ ]  Part 10 - React Native
+- [ ]  Part 10 - React Native (No plans to do this part)
 - [x]  Part 11 - CI/CD
 - [17/22 done]  Part 12 - Containers
 - [x]  Part 13 - Using relation databases
